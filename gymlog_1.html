@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>GymLog</title>
+  <style>
+    :root {
+      --bg:      #f2f2f2;
+      --white:   #ffffff;
+      --border:  #e0e0e0;
+      --border2: #c8c8c8;
+      --accent:  #1a56db;
+      --accentl: #e8effd;
+      --text:    #111111;
+      --text2:   #555555;
+      --text3:   #999999;
+      --red:     #dc2626;
+      --redl:    #fef2f2;
+      --green:   #16a34a;
+      --r:       8px;
+      --r2:      5px;
+      --shadow:  0 1px 4px rgba(0,0,0,.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.5;
+      min-height: 100vh;
+    }
+    button { cursor: pointer; font-family: Arial, Helvetica, sans-serif; border: none; outline: none; transition: all .15s; }
+    input, select, textarea {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--white); color: var(--text);
+      border: 1px solid var(--border); border-radius: var(--r2);
+      padding: 9px 11px; font-size: 14px; outline: none;
+      transition: border-color .15s; width: 100%;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accentl); }
+    textarea { resize: vertical; min-height: 60px; }
+
+    /* ═══ SETUP ═══ */
+    #screen-setup {
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 20px;
+    }
+    .setup-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 32px 24px; width: 100%; max-width: 400px;
+      box-shadow: var(--shadow);
+    }
+    .setup-logo { font-size: 24px; font-weight: 700; margin-bottom: 2px; }
+    .setup-logo span { color: var(--accent); }
+    .setup-sub { color: var(--text3); font-size: 12px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .4px; }
+    .btn-signin { width: 100%; margin-top: 4px; padding: 12px; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; border-radius: var(--r2); }
+    .btn-signin:hover { background: #1447c0; }
+    .btn-signin:disabled { opacity: .4; cursor: not-allowed; }
+    .setup-help { margin-top: 18px; border: 1px solid var(--border); border-radius: var(--r2); }
+    .help-toggle { width: 100%; background: transparent; color: var(--text2); padding: 9px 12px; font-size: 12px; font-weight: 700; text-align: left; display: flex; justify-content: space-between; }
+    .help-body { display: none; padding: 12px; border-top: 1px solid var(--border); color: var(--text2); font-size: 12px; line-height: 1.8; }
+    .help-body.open { display: block; }
+    .help-body ol { padding-left: 16px; }
+    .help-body li { margin-bottom: 5px; }
+    .help-body code { background: var(--bg); color: var(--accent); padding: 1px 5px; border-radius: 3px; font-size: 11px; font-family: monospace; }
+
+    /* ═══ APP ═══ */
+    #screen-app { display: none; min-height: 100vh; padding-bottom: 60px; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 56px; background: var(--white); border-top: 1px solid var(--border); display: flex; z-index: 100; }
+    .bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: transparent; color: var(--text3); font-size: 10px; font-weight: 700; padding: 6px 0; border-radius: 0; }
+    .bn-item .bn-icon { font-size: 19px; line-height: 1; }
+    .bn-item.active { color: var(--accent); }
+
+    .top-bar { position: sticky; top: 0; background: var(--white); border-bottom: 1px solid var(--border); padding: 0 14px; height: 50px; display: flex; align-items: center; justify-content: space-between; z-index: 90; }
+    .top-bar-title { font-size: 16px; font-weight: 700; }
+    .top-bar-back { display: flex; align-items: center; gap: 4px; background: transparent; color: var(--accent); font-size: 14px; font-weight: 700; padding: 4px 0; }
+    .top-bar-action { background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; padding: 7px 14px; border-radius: var(--r2); }
+    .top-bar-action:hover { background: #1447c0; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ═══ CLIENTS ═══ */
+    .view-pad { padding: 14px; }
+    .user-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .user-greeting { font-size: 13px; color: var(--text2); }
+    .user-greeting strong { color: var(--text); }
+    .btn-signout-sm { background: var(--bg); color: var(--text3); font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: var(--r2); border: 1px solid var(--border); }
+    .btn-signout-sm:hover { color: var(--red); border-color: #fecaca; }
+    .sec-label { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+    .clients-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .client-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 14px; cursor: pointer; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; transition: border-color .15s; }
+    .client-card:hover { border-color: var(--accent); }
+    .cc-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accentl); color: var(--accent); font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cc-info { flex: 1; min-width: 0; }
+    .cc-name { font-size: 15px; font-weight: 700; }
+    .cc-meta { font-size: 12px; color: var(--text3); }
+    .cc-stats { display: flex; gap: 12px; margin-top: 4px; }
+    .cc-stat { font-size: 11px; color: var(--text2); }
+    .cc-stat strong { color: var(--text); }
+    .cc-arrow { color: var(--text3); font-size: 20px; }
+    .add-client-box { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; box-shadow: var(--shadow); }
+    .add-client-box .form-group { margin-bottom: 10px; }
+    .add-client-box .form-group:last-child { margin-bottom: 0; }
+
+    /* ═══ CLIENT DETAIL ═══ */
+    .session-list { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .sess-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); }
+    .sess-item-header { display: flex; align-items: center; gap: 8px; padding: 11px 13px; cursor: pointer; user-select: none; }
+    .sess-item-header:active { background: var(--bg); }
+    .sess-date { font-size: 13px; font-weight: 700; min-width: 78px; }
+    .sess-tags { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+    .bp-tag { background: var(--accentl); color: var(--accent); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+    .sess-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .sess-wo-count { font-size: 11px; color: var(--text3); }
+    .note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .sess-chevron { color: var(--text3); font-size: 12px; transition: transform .2s; margin-left: 2px; }
+    .sess-item.open .sess-chevron { transform: rotate(180deg); }
+    .sess-body { display: none; border-top: 1px solid var(--border); }
+    .sess-item.open .sess-body { display: block; }
+    .sess-notes-row { padding: 8px 13px; background: #fffbeb; border-bottom: 1px solid #fef3c7; font-size: 12px; color: #92400e; display: flex; gap: 6px; }
+    .sess-notes-row span { flex: 1; }
+    .wo-section { padding: 9px 13px; border-bottom: 1px solid var(--border); }
+    .wo-section:last-child { border-bottom: none; }
+    .wo-bp-label { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+    .wo-row { margin-bottom: 7px; }
+    .wo-row:last-child { margin-bottom: 0; }
+    .wo-row-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+    .sets-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+    .set-chip { background: var(--bg); border: 1px solid var(--border); font-size: 11px; color: var(--text2); padding: 2px 8px; border-radius: 20px; }
+    .set-chip strong { color: var(--text); }
+
+    /* ═══ LOG SESSION ═══ */
+    .log-form { padding: 14px; display: flex; flex-direction: column; gap: 11px; }
+    .log-row { display: flex; gap: 10px; }
+    .log-row .form-group { flex: 1; margin-bottom: 0; }
+    .section-lbl { font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 7px; }
+    .bp-block-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 9px; }
+    .bp-block-head { display: flex; align-items: center; gap: 8px; padding: 9px 11px; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .bp-block-head select { flex: 1; font-size: 13px; padding: 6px 8px; }
+    .bp-block-body { padding: 11px; }
+    .add-wo-row { display: flex; gap: 7px; margin-bottom: 9px; }
+    .add-wo-row select { flex: 1; font-size: 13px; }
+    .wo-entry-card { border: 1px solid var(--border); border-radius: var(--r2); margin-bottom: 7px; overflow: hidden; }
+    .wo-entry-card:last-child { margin-bottom: 0; }
+    .wo-entry-head { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .wo-entry-name { font-size: 13px; font-weight: 700; }
+    .sets-col-head { display: grid; grid-template-columns: 26px 1fr 1fr 26px; gap: 5px; padding: 4px 9px; font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; }
+    .set-input-row { display: grid; grid-template-columns: 26px 1fr 1fr 26px; gap: 5px; padding: 5px 9px; align-items: center; border-top: 1px solid var(--border); }
+    .set-num-lbl { font-size: 11px; color: var(--text3); text-align: center; font-weight: 700; }
+    .set-input-row input { padding: 5px 4px; font-size: 14px; text-align: center; }
+    .add-set-btn { width: 100%; padding: 6px; text-align: center; background: transparent; color: var(--accent); font-size: 12px; font-weight: 700; border-top: 1px dashed var(--border); }
+    .add-set-btn:hover { background: var(--accentl); }
+    .btn-remove { background: transparent; color: var(--text3); font-size: 15px; padding: 1px 4px; line-height: 1; }
+    .btn-remove:hover { color: var(--red); }
+    .btn-remove:disabled { opacity: .3; }
+    .add-bp-btn { width: 100%; padding: 12px; background: var(--white); border: 2px dashed var(--border); border-radius: var(--r); color: var(--text2); font-size: 13px; font-weight: 700; }
+    .add-bp-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accentl); }
+    .save-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; font-size: 15px; font-weight: 700; border-radius: var(--r); }
+    .save-btn:hover { background: #1447c0; }
+    .save-btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-add-sm { background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: var(--r2); white-space: nowrap; }
+    .btn-add-sm:hover { background: #1447c0; }
+
+    /* ═══ WORKOUTS ═══ */
+    .repo-group { background: var(--white); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 9px; box-shadow: var(--shadow); overflow: hidden; }
+    .repo-group-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 13px; background: var(--bg); border-bottom: 1px solid var(--border); }
+    .repo-group-name { font-size: 13px; font-weight: 700; }
+    .repo-group-count { font-size: 11px; color: var(--text3); }
+    .repo-chips { padding: 9px 11px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .wo-chip { display: inline-flex; align-items: center; gap: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 12px; }
+    .wo-chip button { background: none; color: var(--text3); font-size: 13px; padding: 0; line-height: 1; }
+    .wo-chip button:hover { color: var(--red); }
+    .repo-add-row { padding: 7px 11px; border-top: 1px dashed var(--border); display: flex; gap: 7px; }
+    .repo-add-row input { flex: 1; padding: 6px 9px; font-size: 13px; }
+
+    /* Loading / Toast */
+    .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,.8); display: flex; align-items: center; justify-content: center; z-index: 500; }
+    .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .5s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #toast { position: fixed; bottom: 66px; right: 14px; z-index: 999; display: flex; flex-direction: column; gap: 5px; }
+    .t-item { background: var(--text); color: #fff; border-radius: var(--r2); padding: 9px 14px; font-size: 13px; font-weight: 600; min-width: 160px; animation: slideUp .18s ease; }
+    .t-item.error { background: var(--red); }
+    .t-item.success { background: var(--green); }
+    @keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--text3); }
+    .empty-icon { font-size: 32px; margin-bottom: 8px; }
+    .empty-txt { font-size: 13px; }
+    .pb { height: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SETUP ═══ -->
+<div id="screen-setup">
+  <div class="setup-card">
+    <div class="setup-logo">Gym<span>Log</span></div>
+    <div class="setup-sub">Personal Trainer — Session Tracker</div>
+    <div class="form-group">
+      <label class="form-label">Google OAuth Client ID</label>
+      <input type="text" id="inp-cid" placeholder="xxxxxxxx.apps.googleusercontent.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Google Sheet ID</label>
+      <input type="text" id="inp-sid" placeholder="Sheet ID from URL">
+    </div>
+    <button class="btn-signin" onclick="handleSignIn()">Sign in with Google</button>
+    <div class="setup-help">
+      <button class="help-toggle" onclick="toggleHelp()">
+        <span>Setup guide</span><span id="help-arrow">+</span>
+      </button>
+      <div class="help-body" id="help-body">
+        <ol>
+          <li>Google Cloud Console → Enable <strong>Google Sheets API</strong></li>
+          <li>OAuth consent screen → External → add your Gmail as test user</li>
+          <li>Credentials → OAuth Client ID → Web App → add your GitHub Pages origin (e.g. <code>https://yourusername.github.io</code>)</li>
+          <li>Create a blank Google Sheet → copy the ID from the URL</li>
+          <li>Host this file as <code>index.html</code> on GitHub Pages</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="screen-app">
+
+  <!-- CLIENTS -->
+  <div id="view-clients" class="view active">
+    <div class="top-bar">
+      <div class="top-bar-title">GymLog</div>
+      <button class="btn-signout-sm" onclick="handleSignOut()">Sign out</button>
+    </div>
+    <div class="view-pad">
+      <div class="user-bar">
+        <div class="user-greeting">Hi, <strong id="user-name-disp"></strong></div>
+      </div>
+      <div class="sec-label">Clients</div>
+      <div id="clients-list" class="clients-list"></div>
+      <div class="sec-label">Add Client</div>
+      <div class="add-client-box">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="nc-name" placeholder="e.g. Priya Kapoor" onkeydown="if(event.key==='Enter') addClient()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone (optional)</label>
+          <input type="text" id="nc-phone" placeholder="+91 98000 00000" onkeydown="if(event.key==='Enter') addClient()">
+        </div>
+        <button class="btn-add-sm" style="width:100%;padding:10px" onclick="addClient()">Add Client</button>
+      </div>
+      <div class="pb"></div>
+    </div>
+  </div>
+
+  <!-- CLIENT DETAIL -->
+  <div id="view-client-detail" class="view">
+    <div class="top-bar">
+      <button class="top-bar-back" onclick="navigate('clients')">‹ Clients</button>
+      <div class="top-bar-title" id="detail-name"></div>
+      <button class="top-bar-action" onclick="openLogFor()">+ Log</button>
+    </div>
+    <div id="sess-list-el" class="session-list"></div>
+    <div class="pb"></div>
+  </div>
+
+  <!-- LOG -->
+  <div id="view-log" class="view">
+    <div class="top-bar">
+      <button class="top-bar-back" id="log-back-btn" onclick="navigate('clients')">‹ Back</button>
+      <div class="top-bar-title">Log Session</div>
+      <div style="width:54px"></div>
+    </div>
+    <div class="log-form">
+      <div class="log-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" id="sess-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Client</label>
+          <select id="sess-client"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Session Notes (optional)</label>
+        <textarea id="sess-notes" placeholder="e.g. Increased bench by 5kg, good energy..."></textarea>
+      </div>
+      <div>
+        <div class="section-lbl">Body Parts & Workouts</div>
+        <div id="blocks-container"></div>
+        <button class="add-bp-btn" onclick="addBpBlock()">+ Add Body Part</button>
+      </div>
+      <button class="save-btn" id="btn-save" onclick="saveSession()">Save Session</button>
+      <div class="pb"></div>
+    </div>
+  </div>
+
+  <!-- WORKOUTS -->
+  <div id="view-workouts" class="view">
+    <div class="top-bar">
+      <div class="top-bar-title">Workout Library</div>
+    </div>
+    <div id="repo-grid" class="view-pad"></div>
+    <div class="pb"></div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="bn-item active" data-view="clients" onclick="navigate('clients',this)">
+      <span class="bn-icon">👥</span>Clients
+    </button>
+    <button class="bn-item" data-view="log" onclick="navigate('log',this)">
+      <span class="bn-icon">➕</span>Log
+    </button>
+    <button class="bn-item" data-view="workouts" onclick="navigate('workouts',this)">
+      <span class="bn-icon">📋</span>Workouts
+    </button>
+  </nav>
+</div>
+
+<div class="loading-overlay" id="loading" style="display:none"><div class="spinner"></div></div>
+<div id="toast"></div>
+
+<script>
+const DISC   = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+const SH = { C:'Clients', R:'WorkoutRepo', L:'WorkoutLogs', S:'Sessions' };
+const BODY_PARTS = ['Chest','Back','Shoulders','Biceps','Triceps','Legs','Glutes','Core','Cardio','Full Body'];
+const DEFAULT_REPO = {
+  'Chest':     ['Bench Press','Incline Bench Press','Decline Bench Press','Dumbbell Flyes','Cable Crossovers','Push-ups','Chest Dips','Pec Deck'],
+  'Back':      ['Deadlift','Pull-ups','Bent-over Row','Lat Pulldown','Seated Cable Row','T-Bar Row','Single-arm Dumbbell Row','Face Pull'],
+  'Shoulders': ['Barbell Overhead Press','Dumbbell Shoulder Press','Lateral Raises','Front Raises','Rear Delt Flyes','Arnold Press','Upright Row','Cable Lateral Raises'],
+  'Biceps':    ['Barbell Curl','Dumbbell Curl','Hammer Curl','Preacher Curl','Concentration Curl','Cable Curl','Incline Dumbbell Curl','Reverse Curl'],
+  'Triceps':   ['Tricep Dips','Skull Crushers','Tricep Pushdown','Overhead Tricep Extension','Close Grip Bench Press','Kickbacks','Diamond Push-ups'],
+  'Legs':      ['Barbell Squat','Leg Press','Lunges','Leg Extension','Leg Curl','Romanian Deadlift','Calf Raises','Hack Squat','Bulgarian Split Squat','Step-ups'],
+  'Glutes':    ['Hip Thrust','Glute Bridge','Cable Kickback','Sumo Squat','Resistance Band Walks'],
+  'Core':      ['Plank','Crunches','Russian Twists','Leg Raises','Ab Rollout','Cable Crunch','Bicycle Crunches','Hanging Knee Raises'],
+  'Cardio':    ['Treadmill Run','Stationary Bike','Rowing Machine','Jump Rope','Stair Climber','Elliptical','HIIT Sprints'],
+  'Full Body': ['Clean and Press','Burpees','Kettlebell Swings','Thrusters','Turkish Get-up','Battle Ropes']
+};
+
+const S = {
+  cfg:{cid:'',sid:''}, user:null,
+  clients:[], repo:{}, logs:[], sessions:[],
+  sess:{date:'',client:'',notes:'',blocks:[]},
+  currentClient:null,
+  tc:null, gapiOk:false, gisOk:false
+};
+
+// ── GAPI ──
+window.gapiLoaded = () => {
+  gapi.load('client', async () => {
+    await gapi.client.init({ discoveryDocs:[DISC] });
+    S.gapiOk=true; onReady();
+  });
+};
+window.gisLoaded = () => { S.gisOk=true; onReady(); };
+function onReady() {
+  if (!S.gapiOk||!S.gisOk) return;
+  const cid=localStorage.getItem('gl_cid')||'', sid=localStorage.getItem('gl_sid')||'';
+  if (cid) document.getElementById('inp-cid').value=cid;
+  if (sid) document.getElementById('inp-sid').value=sid;
+  document.getElementById('sess-date').value=today();
+}
+
+// ── AUTH ──
+function handleSignIn() {
+  const cid=document.getElementById('inp-cid').value.trim();
+  const sid=document.getElementById('inp-sid').value.trim();
+  if (!cid) { toast('Enter OAuth Client ID','error'); return; }
+  if (!sid) { toast('Enter Sheet ID','error'); return; }
+  localStorage.setItem('gl_cid',cid); localStorage.setItem('gl_sid',sid);
+  S.cfg={cid,sid};
+  S.tc = google.accounts.oauth2.initTokenClient({
+    client_id:cid, scope:SCOPES,
+    callback: async (resp) => {
+      if (resp.error) { toast('Auth error: '+resp.error,'error'); return; }
+      gapi.client.setToken(resp);
+      await postAuth();
+    }
+  });
+  S.tc.requestAccessToken({prompt:''});
+}
+async function postAuth() {
+  showLoad(true);
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+gapi.client.getToken().access_token}});
+    S.user = await r.json();
+    document.getElementById('user-name-disp').textContent = S.user.given_name||S.user.email;
+    await initSheets(); await loadAll();
+    document.getElementById('screen-setup').style.display='none';
+    document.getElementById('screen-app').style.display='block';
+    renderClientsList();
+  } catch(e) { console.error(e); toast('Could not connect. Check IDs and console.','error'); }
+  finally { showLoad(false); }
+}
+function handleSignOut() {
+  try { google.accounts.oauth2.revoke(gapi.client.getToken().access_token,()=>{}); } catch(_){}
+  gapi.client.setToken(null);
+  document.getElementById('screen-app').style.display='none';
+  document.getElementById('screen-setup').style.display='flex';
+}
+
+// ── SHEETS INIT ──
+async function initSheets() {
+  const meta = await gapi.client.sheets.spreadsheets.get({spreadsheetId:S.cfg.sid});
+  const existing = meta.result.sheets.map(s=>s.properties.title);
+  const needed = [SH.C,SH.R,SH.L,SH.S].filter(n=>!existing.includes(n));
+  if (needed.length) {
+    await gapi.client.sheets.spreadsheets.batchUpdate({spreadsheetId:S.cfg.sid, resource:{requests:needed.map(title=>({addSheet:{properties:{title}}}))}});
+  }
+  const headers=[];
+  if (!existing.includes(SH.C)) headers.push({range:`${SH.C}!A1:C1`,values:[['Name','Phone','Active']]});
+  if (!existing.includes(SH.R)) headers.push({range:`${SH.R}!A1:B1`,values:[['BodyPart','WorkoutName']]});
+  if (!existing.includes(SH.L)) headers.push({range:`${SH.L}!A1:J1`,values:[['LogID','SessionID','SessionDate','ClientName','BodyPart','WorkoutName','SetNum','Reps','WeightKg','LoggedAt']]});
+  if (!existing.includes(SH.S)) headers.push({range:`${SH.S}!A1:D1`,values:[['SessionID','Date','Client','Notes']]});
+  if (headers.length) await gapi.client.sheets.spreadsheets.values.batchUpdate({spreadsheetId:S.cfg.sid,resource:{valueInputOption:'USER_ENTERED',data:headers}});
+  const repoRows = await getVals(`${SH.R}!A2:B`);
+  if (!repoRows||repoRows.length===0) {
+    const rows=[];
+    for (const [bp,wos] of Object.entries(DEFAULT_REPO)) wos.forEach(w=>rows.push([bp,w]));
+    await appendVals(`${SH.R}!A:B`,rows);
+  }
+}
+
+// ── SHEETS API ──
+async function getVals(range) {
+  const r=await gapi.client.sheets.spreadsheets.values.get({spreadsheetId:S.cfg.sid,range});
+  return r.result.values||[];
+}
+async function appendVals(range,values) {
+  return gapi.client.sheets.spreadsheets.values.append({spreadsheetId:S.cfg.sid,range,valueInputOption:'USER_ENTERED',resource:{values}});
+}
+async function updateVals(range,values) {
+  return gapi.client.sheets.spreadsheets.values.update({spreadsheetId:S.cfg.sid,range,valueInputOption:'USER_ENTERED',resource:{values}});
+}
+
+// ── LOAD ──
+async function loadAll() { await Promise.all([loadClients(),loadRepo(),loadLogs(),loadSessions()]); }
+async function loadClients() {
+  const rows=await getVals(`${SH.C}!A2:C`);
+  S.clients=rows.filter(r=>r[0]&&r[2]!=='false').map(r=>({name:r[0],phone:r[1]||''}));
+}
+async function loadRepo() {
+  const rows=await getVals(`${SH.R}!A2:B`);
+  S.repo={};
+  rows.forEach(r=>{if(!r[0]||!r[1])return; const bp=r[0].trim(),w=r[1].trim(); if(!S.repo[bp])S.repo[bp]=[]; S.repo[bp].push(w);});
+}
+async function loadLogs() {
+  const rows=await getVals(`${SH.L}!A2:J`);
+  S.logs=rows.filter(r=>r.length>=7).map(r=>{
+    if(r.length>=10) return {logId:r[0],sessionId:r[1],date:r[2],client:r[3],bodyPart:r[4],workout:r[5],setNum:r[6],reps:r[7],weight:r[8],loggedAt:r[9]};
+    return {logId:r[0],sessionId:r[0],date:r[1],client:r[2],bodyPart:r[3],workout:r[4],setNum:r[5],reps:r[6],weight:r[7],loggedAt:r[8]||''};
+  });
+}
+async function loadSessions() {
+  const rows=await getVals(`${SH.S}!A2:D`);
+  S.sessions=rows.filter(r=>r[0]).map(r=>({sessionId:r[0],date:r[1]||'',client:r[2]||'',notes:r[3]||''}));
+}
+
+// ── CLIENTS ──
+async function addClient() {
+  const name=document.getElementById('nc-name').value.trim();
+  const phone=document.getElementById('nc-phone').value.trim();
+  if (!name) { toast('Enter a name','error'); return; }
+  if (S.clients.find(c=>c.name.toLowerCase()===name.toLowerCase())) { toast('Client already exists','error'); return; }
+  await appendVals(`${SH.C}!A:C`,[[name,phone,'true']]);
+  await loadClients();
+  document.getElementById('nc-name').value=''; document.getElementById('nc-phone').value='';
+  renderClientsList(); toast(`${name} added`,'success');
+}
+async function removeClient(name) {
+  if (!confirm(`Remove "${name}"? History is retained.`)) return;
+  const rows=await getVals(`${SH.C}!A:C`);
+  const idx=rows.findIndex(r=>r[0]===name);
+  if (idx<0) return;
+  await updateVals(`${SH.C}!C${idx+1}`,[['false']]);
+  await loadClients(); renderClientsList(); toast(`${name} removed`,'success');
+}
+
+// ── SAVE SESSION ──
+async function saveSession() {
+  const date=document.getElementById('sess-date').value;
+  const client=document.getElementById('sess-client').value;
+  const notes=document.getElementById('sess-notes').value.trim();
+  if (!date) { toast('Select a date','error'); return; }
+  if (!client) { toast('Select a client','error'); return; }
+  if (!S.sess.blocks.length) { toast('Add at least one body part','error'); return; }
+  for (const bl of S.sess.blocks) {
+    if (!bl.bodyPart) { toast('Select body part for all blocks','error'); return; }
+    if (!bl.workouts.length) { toast(`Add workouts for ${bl.bodyPart}`,'error'); return; }
+  }
+  const ts=new Date().toISOString(), sid='S'+Date.now();
+  const logRows=[];
+  let ri=0;
+  S.sess.blocks.forEach(bl=>bl.workouts.forEach(wo=>wo.sets.forEach((set,si)=>{
+    logRows.push([`${sid}-${ri++}`,sid,date,client,bl.bodyPart,wo.name,si+1,set.reps||'',set.weight||'',ts]);
+  })));
+  const btn=document.getElementById('btn-save');
+  btn.disabled=true; btn.textContent='Saving...';
+  try {
+    await Promise.all([
+      appendVals(`${SH.S}!A:D`,[[sid,date,client,notes]]),
+      appendVals(`${SH.L}!A:J`,logRows)
+    ]);
+    await Promise.all([loadLogs(),loadSessions()]);
+    toast('Session saved ✓','success');
+    S.sess={date:today(),client:S.currentClient||'',notes:'',blocks:[]};
+    document.getElementById('sess-date').value=today();
+    document.getElementById('sess-client').value=S.currentClient||'';
+    document.getElementById('sess-notes').value='';
+    renderBlocks();
+    if (S.currentClient) { navigate('client-detail'); renderClientDetail(S.currentClient); }
+    else navigate('clients');
+  } catch(e) { console.error(e); toast('Save failed','error'); }
+  finally { btn.disabled=false; btn.textContent='Save Session'; }
+}
+
+// ── LOG STATE ──
+function addBpBlock() { S.sess.blocks.push({bodyPart:'',workouts:[]}); renderBlocks(); }
+function removeBpBlock(i) { S.sess.blocks.splice(i,1); renderBlocks(); }
+function setBp(i,val) { S.sess.blocks[i].bodyPart=val; S.sess.blocks[i].workouts=[]; renderBlocks(); }
+function addWorkout(bi) {
+  const sel=document.getElementById('wo-sel-'+bi), name=sel.value;
+  if (!name) return;
+  if (S.sess.blocks[bi].workouts.find(w=>w.name===name)) { toast('Already added','error'); return; }
+  S.sess.blocks[bi].workouts.push({name,sets:[{reps:'',weight:''}]}); renderBlocks();
+}
+function removeWorkout(bi,wi) { S.sess.blocks[bi].workouts.splice(wi,1); renderBlocks(); }
+function addSet(bi,wi) { S.sess.blocks[bi].workouts[wi].sets.push({reps:'',weight:''}); renderBlocks(); }
+function removeSet(bi,wi,si) { if(S.sess.blocks[bi].workouts[wi].sets.length<=1)return; S.sess.blocks[bi].workouts[wi].sets.splice(si,1); renderBlocks(); }
+function updSet(bi,wi,si,f,v) { S.sess.blocks[bi].workouts[wi].sets[si][f]=v; }
+
+// ── REPO ──
+async function addToRepo(bp) {
+  const bpId=bp.replace(/\s+/g,'_'), inp=document.getElementById('ri-'+bpId), name=inp.value.trim();
+  if (!name) return;
+  if ((S.repo[bp]||[]).map(w=>w.toLowerCase()).includes(name.toLowerCase())) { toast('Already exists','error'); return; }
+  await appendVals(`${SH.R}!A:B`,[[bp,name]]);
+  await loadRepo(); inp.value=''; renderWorkoutsRepo(); toast(`"${name}" added`,'success');
+}
+async function removeFromRepo(bp,name) {
+  if (!confirm(`Remove "${name}" from ${bp}?`)) return;
+  const rows=await getVals(`${SH.R}!A:B`), idx=rows.findIndex(r=>r[0]===bp&&r[1]===name);
+  if (idx<0) return;
+  await updateVals(`${SH.R}!A${idx+1}:B${idx+1}`,[['','']]);
+  await loadRepo(); renderWorkoutsRepo(); toast(`"${name}" removed`,'success');
+}
+
+// ── RENDER ──
+function renderClientsList() {
+  const el=document.getElementById('clients-list');
+  populateSel();
+  if (!S.clients.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">👤</div><div class="empty-txt">No clients yet.</div></div>'; return; }
+  el.innerHTML=S.clients.map(c=>{
+    const cSess=S.sessions.filter(s=>s.client===c.name).sort((a,b)=>b.date.localeCompare(a.date));
+    const last=cSess[0];
+    return `<div class="client-card" onclick="openClientDetail('${esc(c.name)}')">
+      <div class="cc-avatar">${c.name.charAt(0).toUpperCase()}</div>
+      <div class="cc-info">
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-meta">${c.phone||''}</div>
+        <div class="cc-stats">
+          <div class="cc-stat"><strong>${cSess.length}</strong> sessions</div>
+          <div class="cc-stat">Last: <strong>${last?fmtDate(last.date):'—'}</strong></div>
+        </div>
+      </div>
+      <div class="cc-arrow">›</div>
+    </div>`;
+  }).join('');
+}
+
+function openClientDetail(name) {
+  S.currentClient=name;
+  document.getElementById('detail-name').textContent=name;
+  renderClientDetail(name);
+  navigate('client-detail');
+}
+
+function renderClientDetail(name) {
+  const el=document.getElementById('sess-list-el');
+  const cSess=S.sessions.filter(s=>s.client===name).sort((a,b)=>b.date.localeCompare(a.date));
+  if (!cSess.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">🏋️</div><div class="empty-txt">No sessions logged yet.<br>Tap "+ Log" to add one.</div></div>'; return; }
+  el.innerHTML=cSess.map((sess,idx)=>{
+    // match logs: prefer sessionId match, fallback to date+client
+    const sLogs=S.logs.filter(l=>l.sessionId===sess.sessionId||(l.sessionId===l.logId&&l.date===sess.date&&l.client===name));
+    const byBp={};
+    sLogs.forEach(l=>{ if(!byBp[l.bodyPart])byBp[l.bodyPart]={}; if(!byBp[l.bodyPart][l.workout])byBp[l.bodyPart][l.workout]=[]; byBp[l.bodyPart][l.workout].push({setNum:l.setNum,reps:l.reps,weight:l.weight}); });
+    const bpList=Object.keys(byBp);
+    const woCount=Object.values(byBp).reduce((a,b)=>a+Object.keys(b).length,0);
+    const setCount=sLogs.length;
+    const hasNotes=!!sess.notes;
+    const tagsHtml=bpList.map(bp=>`<span class="bp-tag">${bp}</span>`).join('');
+    const expanded=`
+      ${hasNotes?`<div class="sess-notes-row">📝 <span>${escHtml(sess.notes)}</span></div>`:''}
+      ${bpList.map(bp=>`
+        <div class="wo-section">
+          <div class="wo-bp-label">${bp}</div>
+          ${Object.entries(byBp[bp]).map(([wo,sets])=>`
+            <div class="wo-row">
+              <div class="wo-row-name">${wo}</div>
+              <div class="sets-chips">
+                ${sets.sort((a,b)=>+a.setNum-+b.setNum).map(s=>`<span class="set-chip">S${s.setNum} <strong>${s.reps||'—'}×${s.weight||'—'}kg</strong></span>`).join('')}
+              </div>
+            </div>`).join('')}
+        </div>`).join('')}`;
+    return `<div class="sess-item" id="si-${idx}">
+      <div class="sess-item-header" onclick="toggleSess(${idx})">
+        <div class="sess-date">${fmtDate(sess.date)}</div>
+        <div class="sess-tags">${tagsHtml}</div>
+        <div class="sess-right">
+          <div class="sess-wo-count">${woCount}w·${setCount}s</div>
+          ${hasNotes?'<span class="note-dot"></span>':''}
+          <span class="sess-chevron">▾</span>
+        </div>
+      </div>
+      <div class="sess-body">${expanded}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSess(idx) { document.getElementById('si-'+idx).classList.toggle('open'); }
+
+function renderBlocks() {
+  const c=document.getElementById('blocks-container'); c.innerHTML='';
+  S.sess.blocks.forEach((block,bi)=>{
+    const avail=S.repo[block.bodyPart]||[];
+    const d=document.createElement('div'); d.className='bp-block-card';
+    d.innerHTML=`
+      <div class="bp-block-head">
+        <select onchange="setBp(${bi},this.value)">
+          <option value="">Select body part...</option>
+          ${BODY_PARTS.map(p=>`<option value="${p}" ${block.bodyPart===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+        <button class="btn-remove" onclick="removeBpBlock(${bi})">✕</button>
+      </div>
+      ${block.bodyPart?`<div class="bp-block-body">
+        <div class="add-wo-row">
+          <select id="wo-sel-${bi}">
+            <option value="">Add workout...</option>
+            ${avail.map(w=>`<option value="${w}">${w}</option>`).join('')}
+          </select>
+          <button class="btn-add-sm" onclick="addWorkout(${bi})">Add</button>
+        </div>
+        ${block.workouts.map((wo,wi)=>`
+          <div class="wo-entry-card">
+            <div class="wo-entry-head">
+              <span class="wo-entry-name">${wo.name}</span>
+              <button class="btn-remove" onclick="removeWorkout(${bi},${wi})">✕</button>
+            </div>
+            <div class="sets-col-head"><div>#</div><div>Reps</div><div>Wt kg</div><div></div></div>
+            ${wo.sets.map((set,si)=>`
+              <div class="set-input-row">
+                <div class="set-num-lbl">${si+1}</div>
+                <input type="number" min="0" step="1" value="${set.reps}" placeholder="0" oninput="updSet(${bi},${wi},${si},'reps',this.value)">
+                <input type="number" min="0" step="0.5" value="${set.weight}" placeholder="0" oninput="updSet(${bi},${wi},${si},'weight',this.value)">
+                <button class="btn-remove" onclick="removeSet(${bi},${wi},${si})" ${wo.sets.length<=1?'disabled':''}>✕</button>
+              </div>`).join('')}
+            <button class="add-set-btn" onclick="addSet(${bi},${wi})">+ Add Set</button>
+          </div>`).join('')}
+      </div>`:''}`;
+    c.appendChild(d);
+  });
+}
+
+function renderWorkoutsRepo() {
+  const el=document.getElementById('repo-grid');
+  const all=[...new Set([...BODY_PARTS,...Object.keys(S.repo)])];
+  el.innerHTML=all.map(bp=>{
+    const wos=S.repo[bp]||[], bpId=bp.replace(/\s+/g,'_');
+    return `<div class="repo-group">
+      <div class="repo-group-head"><span class="repo-group-name">${bp}</span><span class="repo-group-count">${wos.length} exercises</span></div>
+      <div class="repo-chips">
+        ${wos.map(w=>`<span class="wo-chip">${w}<button onclick="removeFromRepo('${esc(bp)}','${esc(w)}')">×</button></span>`).join('')}
+        ${!wos.length?'<span style="color:var(--text3);font-size:12px">None yet</span>':''}
+      </div>
+      <div class="repo-add-row">
+        <input type="text" id="ri-${bpId}" placeholder="Add exercise..." onkeydown="if(event.key==='Enter')addToRepo('${esc(bp)}')">
+        <button class="btn-add-sm" onclick="addToRepo('${esc(bp)}')">Add</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function populateSel() {
+  const opts='<option value="">Select client...</option>'+S.clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');
+  document.getElementById('sess-client').innerHTML=opts;
+}
+
+function openLogFor() {
+  document.getElementById('log-back-btn').onclick=()=>{ navigate('client-detail'); renderClientDetail(S.currentClient); };
+  populateSel();
+  document.getElementById('sess-client').value=S.currentClient||'';
+  document.getElementById('sess-date').value=today();
+  document.getElementById('sess-notes').value='';
+  S.sess={date:today(),client:S.currentClient||'',notes:'',blocks:[]};
+  renderBlocks();
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
+  document.querySelector('[data-view=log]').classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-log').classList.add('active');
+}
+
+function navigate(view, btn) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else { const m=document.querySelector(`[data-view="${view}"]`); if(m)m.classList.add('active'); }
+  if (view==='clients') renderClientsList();
+  if (view==='log') { populateSel(); if(!S.sess.blocks.length) addBpBlock(); renderBlocks(); document.getElementById('log-back-btn').onclick=()=>navigate('clients'); }
+  if (view==='workouts') renderWorkoutsRepo();
+}
+
+// ── UTILS ──
+function today() { return new Date().toISOString().slice(0,10); }
+function fmtDate(d) {
+  if (!d) return '—';
+  try { return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}); }
+  catch(_) { return d; }
+}
+function showLoad(on) { document.getElementById('loading').style.display=on?'flex':'none'; }
+function toast(msg,type='success') {
+  const el=document.getElementById('toast'), t=document.createElement('div');
+  t.className='t-item '+type; t.textContent=msg; el.appendChild(t);
+  setTimeout(()=>t.remove(),2600);
+}
+function esc(s) { return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toggleHelp() {
+  const b=document.getElementById('help-body'), open=b.classList.toggle('open');
+  document.getElementById('help-arrow').textContent=open?'−':'+';
+}
+</script>
+<script src="https://apis.google.com/js/api.js?onload=gapiLoaded" async defer></script>
+<script src="https://accounts.google.com/gsi/client" onload="gisLoaded()" async defer></script>
+</body>
+</html>
