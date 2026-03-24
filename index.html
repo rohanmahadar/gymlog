@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -19,191 +20,195 @@
     input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentl)}
     textarea{resize:vertical;min-height:54px}
 
-    /* ── SIGN IN ── */
-    #screen-setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
-    .signin-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:44px 28px;width:100%;max-width:320px;box-shadow:var(--shadow);text-align:center}
-    .signin-logo{font-size:28px;font-weight:700;margin-bottom:4px}
-    .signin-logo span{color:var(--accent)}
-    .signin-sub{color:var(--text3);font-size:13px;margin-bottom:36px}
-    .btn-google{width:100%;padding:12px 16px;background:var(--white);color:var(--text);font-weight:700;font-size:14px;border-radius:var(--r2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:var(--shadow)}
-    .btn-google:hover{border-color:var(--accent);background:var(--accentl)}
-    .btn-google svg{flex-shrink:0}
-    .signin-access{margin-top:18px;font-size:12px;color:var(--text3)}
+```
+/* ── SIGN IN ── */
+#screen-setup{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg)}
+.signin-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:44px 28px;width:100%;max-width:320px;box-shadow:var(--shadow);text-align:center}
+.signin-logo{font-size:28px;font-weight:700;margin-bottom:4px}
+.signin-logo span{color:var(--accent)}
+.signin-sub{color:var(--text3);font-size:13px;margin-bottom:36px}
+.btn-google{width:100%;padding:12px 16px;background:var(--white);color:var(--text);font-weight:700;font-size:14px;border-radius:var(--r2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:var(--shadow)}
+.btn-google:hover{border-color:var(--accent);background:var(--accentl)}
+.btn-google svg{flex-shrink:0}
+.signin-access{margin-top:18px;font-size:12px;color:var(--text3)}
 
-    /* ── APP ── */
-    #screen-app{display:none;min-height:100vh;padding-bottom:60px}
-    .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:100}
-    .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:transparent;color:var(--text3);font-size:10px;font-weight:700;padding:6px 0;border-radius:0}
-    .bn-item .bn-icon{font-size:19px;line-height:1}
-    .bn-item.active{color:var(--accent)}
-    .hidden-nav{display:none!important}
+/* ── APP ── */
+#screen-app{display:none;min-height:100vh;padding-bottom:60px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:100}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:transparent;color:var(--text3);font-size:10px;font-weight:700;padding:6px 0;border-radius:0}
+.bn-item .bn-icon{font-size:19px;line-height:1}
+.bn-item.active{color:var(--accent)}
+.hidden-nav{display:none!important}
 
-    .top-bar{position:sticky;top:0;background:var(--white);border-bottom:1px solid var(--border);padding:0 14px;height:50px;display:flex;align-items:center;justify-content:space-between;z-index:90}
-    .top-bar-title{font-size:16px;font-weight:700}
-    .top-bar-back{display:flex;align-items:center;gap:4px;background:transparent;color:var(--accent);font-size:14px;font-weight:700;padding:4px 0}
-    .top-bar-action{background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:7px 14px;border-radius:var(--r2)}
-    .top-bar-action:hover{background:#1447c0}
+.top-bar{position:sticky;top:0;background:var(--white);border-bottom:1px solid var(--border);padding:0 14px;height:50px;display:flex;align-items:center;justify-content:space-between;z-index:90}
+.top-bar-title{font-size:16px;font-weight:700}
+.top-bar-back{display:flex;align-items:center;gap:4px;background:transparent;color:var(--accent);font-size:14px;font-weight:700;padding:4px 0}
+.top-bar-action{background:var(--accent);color:#fff;font-size:13px;font-weight:700;padding:7px 14px;border-radius:var(--r2)}
+.top-bar-action:hover{background:#1447c0}
 
-    /* User avatar in top bar */
-    .user-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer}
-    .user-avatar-placeholder{width:32px;height:32px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--border)}
+/* User avatar in top bar */
+.user-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--border);cursor:pointer}
+.user-avatar-placeholder{width:32px;height:32px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--border)}
 
-    /* Profile dropdown */
-    .profile-menu{position:fixed;top:54px;right:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:220px;padding:14px}
-    .profile-menu.hidden{display:none}
-    .pm-user{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
-    .pm-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0}
-    .pm-avatar-ph{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .pm-name{font-size:14px;font-weight:700;line-height:1.2}
-    .pm-email{font-size:11px;color:var(--text3)}
-    .pm-role{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;margin-top:2px}
-    .pm-role.admin{background:#fef9c3;color:#a16207}
-    .pm-role.user{background:var(--accentl);color:var(--accent)}
-    .pm-btn{width:100%;text-align:left;background:transparent;color:var(--text2);font-size:13px;padding:7px 0;border-radius:0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-    .pm-btn:last-child{border-bottom:none;padding-bottom:0}
-    .pm-btn:hover{color:var(--text)}
-    .pm-signout{color:var(--red)!important}
-    .pm-overlay{position:fixed;inset:0;z-index:199}
-    .pm-overlay.hidden{display:none}
+/* Profile dropdown */
+.profile-menu{position:fixed;top:54px;right:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:200;min-width:220px;padding:14px}
+.profile-menu.hidden{display:none}
+.pm-user{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.pm-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.pm-avatar-ph{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm-name{font-size:14px;font-weight:700;line-height:1.2}
+.pm-email{font-size:11px;color:var(--text3)}
+.pm-role{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;margin-top:2px}
+.pm-role.admin{background:#fef9c3;color:#a16207}
+.pm-role.user{background:var(--accentl);color:var(--accent)}
+.pm-btn{width:100%;text-align:left;background:transparent;color:var(--text2);font-size:13px;padding:7px 0;border-radius:0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.pm-btn:last-child{border-bottom:none;padding-bottom:0}
+.pm-btn:hover{color:var(--text)}
+.pm-signout{color:var(--red)!important}
+.pm-overlay{position:fixed;inset:0;z-index:199}
+.pm-overlay.hidden{display:none}
 
 
-    .view{display:none}
-    .view.active{display:block}
-    .view-pad{padding:14px}
-    .pb{height:14px}
-    .sec-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.view{display:none}
+.view.active{display:block}
+.view-pad{padding:14px}
+.pb{height:14px}
+.sec-label{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
 
-    /* ── CLIENTS ── */
-    .clients-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-    .client-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:border-color .15s}
-    .client-card:hover{border-color:var(--accent)}
-    .cc-avatar{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .cc-info{flex:1;min-width:0}
-    .cc-name{font-size:15px;font-weight:700}
-    .cc-meta{font-size:12px;color:var(--text3)}
-    .cc-stats{display:flex;gap:14px;margin-top:4px}
-    .cc-stat{font-size:11px;color:var(--text2)}
-    .cc-stat strong{color:var(--text)}
-    .cc-arrow{color:var(--text3);font-size:20px}
-    .add-client-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
-    .form-group{margin-bottom:10px}
-    .form-group:last-child{margin-bottom:0}
-    .form-label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+/* ── CLIENTS ── */
+.clients-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.client-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.client-card:hover{border-color:var(--accent)}
+.cc-avatar{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cc-info{flex:1;min-width:0}
+.cc-name{font-size:15px;font-weight:700}
+.cc-meta{font-size:12px;color:var(--text3)}
+.cc-stats{display:flex;gap:14px;margin-top:4px}
+.cc-stat{font-size:11px;color:var(--text2)}
+.cc-stat strong{color:var(--text)}
+.cc-arrow{color:var(--text3);font-size:20px}
+.add-client-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
+.form-group{margin-bottom:10px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
 
-    /* Edit client modal */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;display:flex;align-items:flex-end;justify-content:center}
-    .modal-overlay.hidden{display:none}
-    .modal-sheet{background:var(--white);border-radius:16px 16px 0 0;padding:24px 20px 32px;width:100%;max-width:500px;box-shadow:0 -4px 24px rgba(0,0,0,.12)}
-    .modal-title{font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
-    .modal-close{background:transparent;color:var(--text3);font-size:20px;padding:2px 6px;border-radius:var(--r2)}
-    .modal-close:hover{color:var(--text)}
+/* Edit client modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-sheet{background:var(--white);border-radius:16px 16px 0 0;padding:24px 20px 32px;width:100%;max-width:500px;box-shadow:0 -4px 24px rgba(0,0,0,.12)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:transparent;color:var(--text3);font-size:20px;padding:2px 6px;border-radius:var(--r2)}
+.modal-close:hover{color:var(--text)}
 
-    /* ── CLIENT DETAIL ── */
-    .session-list{padding:10px 14px;display:flex;flex-direction:column;gap:8px}
-    .sess-item{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-    .sess-item-header{display:flex;align-items:center;gap:6px;padding:10px 12px;cursor:pointer;user-select:none}
-    .sess-item-header:active{background:var(--bg)}
-    .sess-date{font-size:13px;font-weight:700;white-space:nowrap;margin-right:2px}
-    .sess-summary{display:flex;gap:4px;flex-wrap:wrap;flex:1;min-width:0}
-    .bp-sum-tag{background:var(--accentl);color:var(--accent);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
-    .bp-sum-tag em{font-style:normal;color:var(--text2);margin-left:2px}
-    .sess-hdr-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
-    .note-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:4px}
-    .btn-icon-sm{background:transparent;color:var(--text3);font-size:15px;padding:3px 5px;line-height:1;border-radius:var(--r2)}
-    .btn-icon-sm:hover{color:var(--accent);background:var(--accentl)}
-    .btn-icon-del:hover{color:var(--red)!important;background:var(--redl)!important}
-    .sess-chevron{color:var(--text3);font-size:11px;transition:transform .2s;margin-left:1px}
-    .sess-item.open .sess-chevron{transform:rotate(180deg)}
-    .sess-body{display:none;border-top:1px solid var(--border)}
-    .sess-item.open .sess-body{display:block}
-    .sess-notes-row{padding:7px 12px;background:#fffbeb;border-bottom:1px solid #fef3c7;font-size:12px;color:#92400e;display:flex;gap:5px}
-    .sess-notes-row span{flex:1}
-    .wo-row{display:flex;align-items:baseline;gap:0;padding:6px 12px;border-bottom:1px solid var(--border)}
-    .wo-row:last-child{border-bottom:none}
-    .wo-left{min-width:72px;max-width:72px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding-top:1px;flex-shrink:0}
-    .wo-right{flex:1;min-width:0}
-    .wo-name{font-size:13px;font-weight:700;margin-bottom:3px}
-    .sets-chips{display:flex;flex-wrap:wrap;gap:3px}
-    .set-chip{background:var(--bg);border:1px solid var(--border);font-size:11px;color:var(--text);padding:1px 7px;border-radius:20px;font-weight:600}
+/* ── CLIENT DETAIL ── */
+.session-list{padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.sess-item{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.sess-item-header{display:flex;align-items:center;gap:6px;padding:10px 12px;cursor:pointer;user-select:none}
+.sess-item-header:active{background:var(--bg)}
+.sess-date{font-size:13px;font-weight:700;white-space:nowrap;margin-right:2px}
+.sess-summary{display:flex;gap:4px;flex-wrap:wrap;flex:1;min-width:0}
+.bp-sum-tag{background:var(--accentl);color:var(--accent);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.bp-sum-tag em{font-style:normal;color:var(--text2);margin-left:2px}
+.sess-hdr-actions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.note-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:4px}
+.btn-icon-sm{background:transparent;color:var(--text3);font-size:15px;padding:3px 5px;line-height:1;border-radius:var(--r2)}
+.btn-icon-sm:hover{color:var(--accent);background:var(--accentl)}
+.btn-icon-del:hover{color:var(--red)!important;background:var(--redl)!important}
+.sess-chevron{color:var(--text3);font-size:11px;transition:transform .2s;margin-left:1px}
+.sess-item.open .sess-chevron{transform:rotate(180deg)}
+.sess-body{display:none;border-top:1px solid var(--border)}
+.sess-item.open .sess-body{display:block}
+.sess-notes-row{padding:7px 12px;background:#fffbeb;border-bottom:1px solid #fef3c7;font-size:12px;color:#92400e;display:flex;gap:5px}
+.sess-notes-row span{flex:1}
+.wo-row{display:flex;align-items:baseline;gap:0;padding:6px 12px;border-bottom:1px solid var(--border)}
+.wo-row:last-child{border-bottom:none}
+.wo-left{min-width:72px;max-width:72px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;padding-top:1px;flex-shrink:0}
+.wo-right{flex:1;min-width:0}
+.wo-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.sets-chips{display:flex;flex-wrap:wrap;gap:3px}
+.set-chip{background:var(--bg);border:1px solid var(--border);font-size:11px;color:var(--text);padding:1px 7px;border-radius:20px;font-weight:600}
 
-    /* ── LOG ── */
-    .log-form{padding:12px;display:flex;flex-direction:column;gap:10px}
-    .log-row{display:flex;gap:8px}
-    .log-row .form-group{flex:1;margin-bottom:0}
-    .wo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
-    .wo-card-top{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--bg);border-bottom:1px solid var(--border)}
-    .wo-card-top select{flex:1;font-size:13px;padding:5px 7px}
-    .btn-rm{background:transparent;color:var(--text3);font-size:16px;padding:2px 5px;line-height:1;flex-shrink:0}
-    .btn-rm:hover{color:var(--red)}
-    .btn-rm:disabled{opacity:.25;cursor:default}
-    .sets-area{padding:8px 10px}
-    .set-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-    .set-row:last-child{margin-bottom:0}
-    .set-lbl{font-size:11px;font-weight:700;color:var(--text3);min-width:20px;text-align:center}
-    .set-inp{flex:1;padding:6px 6px;font-size:14px;text-align:center}
-    .set-sep{font-size:12px;color:var(--text3);flex-shrink:0}
-    .add-set-link{display:block;text-align:center;padding:5px;color:var(--accent);font-size:12px;font-weight:700;border-top:1px dashed var(--border);background:transparent;width:100%}
-    .add-set-link:hover{background:var(--accentl)}
-    .add-wo-btn{width:100%;padding:11px;background:var(--white);border:2px dashed var(--border);border-radius:var(--r);color:var(--text2);font-size:13px;font-weight:700}
-    .add-wo-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accentl)}
-    .save-btn{width:100%;padding:13px;background:var(--accent);color:#fff;font-size:15px;font-weight:700;border-radius:var(--r)}
-    .save-btn:hover{background:#1447c0}
-    .save-btn:disabled{opacity:.4;cursor:not-allowed}
-    .btn-add-sm{background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:var(--r2);white-space:nowrap}
-    .btn-add-sm:hover{background:#1447c0}
+/* ── LOG ── */
+.log-form{padding:12px;display:flex;flex-direction:column;gap:10px}
+.log-row{display:flex;gap:8px}
+.log-row .form-group{flex:1;margin-bottom:0}
+.wo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.wo-card-top{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--bg);border-bottom:1px solid var(--border)}
+.wo-card-top select{flex:1;font-size:13px;padding:5px 7px}
+.btn-rm{background:transparent;color:var(--text3);font-size:16px;padding:2px 5px;line-height:1;flex-shrink:0}
+.btn-rm:hover{color:var(--red)}
+.btn-rm:disabled{opacity:.25;cursor:default}
+.sets-area{padding:8px 10px}
+.set-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.set-row:last-child{margin-bottom:0}
+.set-lbl{font-size:11px;font-weight:700;color:var(--text3);min-width:20px;text-align:center}
+.set-inp{flex:1;padding:6px 6px;font-size:14px;text-align:center}
+.set-sep{font-size:12px;color:var(--text3);flex-shrink:0}
+.add-set-link{display:block;text-align:center;padding:5px;color:var(--accent);font-size:12px;font-weight:700;border-top:1px dashed var(--border);background:transparent;width:100%}
+.add-set-link:hover{background:var(--accentl)}
+.add-wo-btn{width:100%;padding:11px;background:var(--white);border:2px dashed var(--border);border-radius:var(--r);color:var(--text2);font-size:13px;font-weight:700}
+.add-wo-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accentl)}
+.save-btn{width:100%;padding:13px;background:var(--accent);color:#fff;font-size:15px;font-weight:700;border-radius:var(--r)}
+.save-btn:hover{background:#1447c0}
+.save-btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-add-sm{background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:var(--r2);white-space:nowrap}
+.btn-add-sm:hover{background:#1447c0}
 
-    /* ── WORKOUTS ── */
-    .repo-group{background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;box-shadow:var(--shadow);overflow:hidden}
-    .repo-group-head{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--bg);border-bottom:1px solid var(--border)}
-    .repo-group-name{font-size:13px;font-weight:700}
-    .repo-group-count{font-size:11px;color:var(--text3)}
-    .repo-chips{padding:9px 11px;display:flex;flex-wrap:wrap;gap:5px}
-    .wo-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:12px}
-    .wo-chip button{background:none;color:var(--text3);font-size:13px;padding:0;line-height:1}
-    .wo-chip button:hover{color:var(--red)}
-    .repo-add-row{padding:7px 11px;border-top:1px dashed var(--border);display:flex;gap:7px}
-    .repo-add-row input{flex:1;padding:6px 9px;font-size:13px}
+/* ── WORKOUTS ── */
+.repo-group{background:var(--white);border:1px solid var(--border);border-radius:var(--r);margin-bottom:9px;box-shadow:var(--shadow);overflow:hidden}
+.repo-group-head{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:var(--bg);border-bottom:1px solid var(--border)}
+.repo-group-name{font-size:13px;font-weight:700}
+.repo-group-count{font-size:11px;color:var(--text3)}
+.repo-chips{padding:9px 11px;display:flex;flex-wrap:wrap;gap:5px}
+.wo-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:12px}
+.wo-chip button{background:none;color:var(--text3);font-size:13px;padding:0;line-height:1}
+.wo-chip button:hover{color:var(--red)}
+.repo-add-row{padding:7px 11px;border-top:1px dashed var(--border);display:flex;gap:7px}
+.repo-add-row input{flex:1;padding:6px 9px;font-size:13px}
 
-    /* ── PROFILE EDIT ── */
-    .profile-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
-    .profile-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
-    .profile-pic{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
-    .profile-pic-ph{width:56px;height:56px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--border)}
-    .profile-info{flex:1}
-    .profile-name{font-size:16px;font-weight:700}
-    .profile-email{font-size:12px;color:var(--text3)}
+/* ── PROFILE EDIT ── */
+.profile-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.profile-header{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.profile-pic{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+.profile-pic-ph{width:56px;height:56px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--border)}
+.profile-info{flex:1}
+.profile-name{font-size:16px;font-weight:700}
+.profile-email{font-size:12px;color:var(--text3)}
 
-    /* Users table (admin) */
-    .users-table{width:100%;border-collapse:collapse;font-size:13px}
-    .users-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
-    .users-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
-    .users-table tr:last-child td{border-bottom:none}
-    .user-row-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle}
-    .user-row-avatar-ph{width:28px;height:28px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-    .role-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;cursor:pointer;border:none}
-    .role-badge.admin{background:#fef9c3;color:#a16207}
-    .role-badge.user{background:var(--accentl);color:var(--accent)}
+/* Users table (admin) */
+.users-table{width:100%;border-collapse:collapse;font-size:13px}
+.users-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
+.users-table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.users-table tr:last-child td{border-bottom:none}
+.user-row-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;vertical-align:middle}
+.user-row-avatar-ph{width:28px;height:28px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.role-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;cursor:pointer;border:none}
+.role-badge.admin{background:#fef9c3;color:#a16207}
+.role-badge.user{background:var(--accentl);color:var(--accent)}
 
-    /* Loading / Toast */
-    .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;z-index:500}
-    .spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    #toast{position:fixed;bottom:66px;right:14px;z-index:999;display:flex;flex-direction:column;gap:5px}
-    .t-item{background:var(--text);color:#fff;border-radius:var(--r2);padding:9px 14px;font-size:13px;font-weight:600;min-width:160px;animation:slideUp .18s ease}
-    .t-item.error{background:var(--red)}
-    .t-item.success{background:var(--green)}
-    @keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
-    .empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
-    .empty-icon{font-size:32px;margin-bottom:8px}
-    .empty-txt{font-size:13px}
-    .access-denied{text-align:center;padding:60px 20px}
-    .access-denied h2{font-size:18px;margin-bottom:8px}
-    .access-denied p{font-size:13px;color:var(--text3)}
+/* Loading / Toast */
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;z-index:500}
+.spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:66px;right:14px;z-index:999;display:flex;flex-direction:column;gap:5px}
+.t-item{background:var(--text);color:#fff;border-radius:var(--r2);padding:9px 14px;font-size:13px;font-weight:600;min-width:160px;animation:slideUp .18s ease}
+.t-item.error{background:var(--red)}
+.t-item.success{background:var(--green)}
+@keyframes slideUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:32px;margin-bottom:8px}
+.empty-txt{font-size:13px}
+.access-denied{text-align:center;padding:60px 20px}
+.access-denied h2{font-size:18px;margin-bottom:8px}
+.access-denied p{font-size:13px;color:var(--text3)}
+```
+
   </style>
 </head>
 <body>
 
 <!-- SIGN IN -->
+
 <div id="screen-setup">
   <div class="signin-card">
     <div class="signin-logo">Gym<span>Log</span></div>
@@ -217,9 +222,11 @@
 </div>
 
 <!-- APP -->
+
 <div id="screen-app">
 
   <!-- CLIENTS -->
+
   <div id="view-clients" class="view active">
     <div class="top-bar">
       <div class="top-bar-title">GymLog</div>
@@ -253,6 +260,7 @@
   </div>
 
   <!-- CLIENT DETAIL -->
+
   <div id="view-client-detail" class="view">
     <div class="top-bar">
       <button class="top-bar-back" onclick="navigate('clients')">&#8249; Clients</button>
@@ -264,6 +272,7 @@
   </div>
 
   <!-- LOG -->
+
   <div id="view-log" class="view">
     <div class="top-bar">
       <button class="top-bar-back" id="log-back-btn" onclick="navigate('clients')">&#8249; Back</button>
@@ -296,6 +305,7 @@
   </div>
 
   <!-- WORKOUTS -->
+
   <div id="view-workouts" class="view">
     <div class="top-bar"><div class="top-bar-title">Workout Library</div></div>
     <div id="repo-grid" class="view-pad"></div>
@@ -303,24 +313,54 @@
   </div>
 
   <!-- PROFILE -->
+
   <div id="view-profile" class="view">
     <div class="top-bar">
       <button class="top-bar-back" onclick="navigate('clients')">&#8249; Back</button>
       <div class="top-bar-title">Profile</div>
+      <button class="top-bar-action" id="profile-edit-btn" onclick="toggleProfileEdit()">Edit</button>
+    </div>
+    <div class="view-pad">
+      <!-- View mode -->
+      <div id="profile-view-mode">
+        <div class="profile-section" id="profile-card"></div>
+      </div>
+      <!-- Edit mode (hidden by default) -->
+      <div id="profile-edit-mode" style="display:none">
+        <div class="add-client-box" style="margin-bottom:14px">
+          <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="my-name" placeholder="Your name"></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" id="my-email" disabled style="background:var(--bg);color:var(--text3)"></div>
+          <div class="form-group"><label class="form-label">Phone</label><input type="text" id="my-phone" placeholder="+91 98000 00000"></div>
+          <div class="form-group"><label class="form-label">Role</label><input type="text" id="my-role-display" disabled style="background:var(--bg);color:var(--text3)"></div>
+          <button class="btn-add-sm" style="width:100%;padding:10px" onclick="saveMyProfile()">Save Changes</button>
+        </div>
+      </div>
+      <div id="profile-manage-users-btn" style="display:none;margin-top:4px">
+        <button class="add-wo-btn" style="margin-top:0" onclick="navigateUsers()">&#128101; Manage Users &amp; Permissions &#8250;</button>
+      </div>
+      <div class="pb"></div>
+    </div>
+  </div>
+
+  <!-- USERS (admin only) -->
+
+  <div id="view-users" class="view">
+    <div class="top-bar">
+      <button class="top-bar-back" onclick="navigate('profile')">&#8249; Profile</button>
+      <div class="top-bar-title">Users</div>
       <div style="width:54px"></div>
     </div>
     <div class="view-pad">
-      <div class="profile-section" id="profile-card"></div>
-      <div class="sec-label" style="margin-top:4px">Edit My Details</div>
-      <div class="add-client-box" style="margin-bottom:14px">
-        <div class="form-group"><label class="form-label">Phone</label><input type="text" id="my-phone" placeholder="+91 98000 00000"></div>
-        <button class="btn-add-sm" style="width:100%;padding:10px" onclick="saveMyProfile()">Save</button>
+      <div class="sec-label">Add User</div>
+      <div class="add-client-box" style="margin-bottom:16px">
+        <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="nu-name" placeholder="e.g. Amit Singh"></div>
+        <div class="form-group"><label class="form-label">Email <span style="color:var(--red)">*</span></label><input type="email" id="nu-email" placeholder="trainer@email.com"></div>
+        <div class="form-group" style="margin-bottom:14px"><label class="form-label">Role</label><select id="nu-role"><option value="trainer">Trainer</option><option value="client">Client</option><option value="admin">Admin</option></select></div>
+        <button class="btn-add-sm" style="width:100%;padding:10px" onclick="adminAddUser()">Add User</button>
       </div>
-      <div id="admin-users-section" style="display:none">
-        <div class="sec-label" style="margin-top:4px">Add User</div>
-        <div class="add-client-box" style="margin-bottom:14px"><div class="form-group"><label class="form-label">Full Name</label><input type="text" id="nu-name" placeholder="e.g. Amit Singh"></div><div class="form-group"><label class="form-label">Email <span style="color:var(--red)">*</span></label><input type="email" id="nu-email" placeholder="trainer@email.com"></div><div class="form-group" style="margin-bottom:14px"><label class="form-label">Role</label><select id="nu-role"><option value="trainer">Trainer</option><option value="client">Client</option><option value="admin">Admin</option></select></div><button class="btn-add-sm" style="width:100%;padding:10px" onclick="adminAddUser()">Add User</button></div>
-        <div class="sec-label">All Users</div>
-        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)"><table class="users-table" id="users-table"><thead><tr><th></th><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead><tbody id="users-tbody"></tbody></table></div>
+      <div class="sec-label">All Users</div>
+      <div id="admin-users-section" style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)">
+        <table class="users-table" id="users-table"><thead><tr><th></th><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead><tbody id="users-tbody"></tbody></table>
       </div>
       <div class="pb"></div>
     </div>
@@ -334,6 +374,7 @@
 </div>
 
 <!-- Edit client modal -->
+
 <div class="modal-overlay hidden" id="edit-client-modal">
   <div class="modal-sheet">
     <div class="modal-title">
@@ -349,6 +390,7 @@
 </div>
 
 <!-- Profile dropdown -->
+
 <div class="pm-overlay hidden" id="pm-overlay" onclick="closeProfileMenu()"></div>
 <div class="profile-menu hidden" id="profile-menu">
   <div class="pm-user">
@@ -828,6 +870,7 @@ async function setUserRole(email, role) {
   const ur=S.allUsers.find(u=>u.email===email);
   if(ur) ur.role=role;
   renderProfile();
+  renderUsersTable();
 }
 async function approveUser(email) {
   await setUserRole(email,'user');
@@ -991,28 +1034,56 @@ function renderWorkoutsRepo() {
 }
 
 function renderProfile() {
+  const roleLabel=S.userRole==='admin'?'Admin':S.userRole==='trainer'?'Trainer':'Client';
+  const roleCls=S.userRole==='admin'?'admin':S.userRole==='trainer'?'user':'user';
+  const roleColor=S.userRole==='admin'?'#a16207':S.userRole==='trainer'?'#16a34a':'#1a56db';
+  const roleBg=S.userRole==='admin'?'#fef9c3':S.userRole==='trainer'?'#f0fdf4':'#e8effd';
+
   const pc=document.getElementById('profile-card');
   const avatarHtml=S.user.picture
     ?'<img class="profile-pic" src="'+S.user.picture+'" alt="avatar">'
     :'<div class="profile-pic-ph">'+(S.user.given_name||'?').charAt(0).toUpperCase()+'</div>';
-  const roleLabel=S.userRole==='admin'?'Admin':S.userRole==='trainer'?'Trainer':'Client';
-  const roleCls=S.userRole==='admin'?'admin':'user';
+
   pc.innerHTML=
     '<div class="profile-header">'+avatarHtml+
       '<div class="profile-info">'+
         '<div class="profile-name">'+escHtml(S.user.name||S.user.given_name||'')+'</div>'+
-        '<div class="profile-email">'+escHtml(S.user.email||'')+'</div>'+
-        '<div class="pm-role '+roleCls+'" style="margin-top:4px">'+roleLabel+'</div>'+
+        '<div style="font-size:11px;font-weight:700;padding:1px 9px;border-radius:20px;display:inline-block;margin-top:3px;background:'+roleBg+';color:'+roleColor+'">'+roleLabel+'</div>'+
       '</div>'+
     '</div>'+
-    '<div style="font-size:12px;color:var(--text3)">Name and photo come from your Google account.</div>';
-  // Pre-fill phone if saved
-  const phoneEl=document.getElementById('my-phone');
-  if(phoneEl&&S.myPhone) phoneEl.value=S.myPhone;
-  const adminSec=document.getElementById('admin-users-section');
-  if (S.userRole!=='admin') { adminSec.style.display='none'; return; }
-  adminSec.style.display='block';
+    '<div style="display:flex;flex-direction:column;gap:10px;margin-top:2px">'+
+      '<div style="display:flex;gap:8px;align-items:center">'+
+        '<span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;min-width:52px">Email</span>'+
+        '<span style="font-size:13px;color:var(--text2)">'+escHtml(S.user.email||'—')+'</span>'+
+      '</div>'+
+      '<div style="display:flex;gap:8px;align-items:center">'+
+        '<span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;min-width:52px">Phone</span>'+
+        '<span style="font-size:13px;color:'+(S.myPhone?'var(--text)':'var(--text3)')+'">'+escHtml(S.myPhone||'Not set')+'</span>'+
+      '</div>'+
+    '</div>'+
+    '<div style="margin-top:12px;font-size:11px;color:var(--text3)">Name and photo come from your Google account.</div>';
+
+  // Ensure edit mode is hidden when rendering
+  document.getElementById('profile-edit-mode').style.display='none';
+  document.getElementById('profile-view-mode').style.display='';
+  document.getElementById('profile-edit-btn').textContent='Edit';
+
+  // Admin: show manage users button linking to users view
+  const adminBtn=document.getElementById('profile-manage-users-btn');
+  if(adminBtn) adminBtn.style.display=S.userRole==='admin'?'':'none';
+}
+
+
+function navigateUsers(){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-users').classList.add('active');
+  renderUsersTable();
+}
+
+// ── RENDER USERS TABLE ──
+function renderUsersTable() {
   const tbody=document.getElementById('users-tbody');
+  if(!tbody) return;
   const others=S.allUsers.filter(u=>u.email!==S.user.email);
   const sorted=[
     ...others.filter(u=>u.role==='pending'),
@@ -1054,7 +1125,7 @@ function renderProfile() {
     }
     return '<tr>'+
       '<td>'+av+'</td>'+
-      '<td style="font-weight:700;white-space:nowrap">'+escHtml(u.name||'\u2014')+statusTag+'</td>'+
+      '<td style="font-weight:700;white-space:nowrap">'+escHtml(u.name||'—')+statusTag+'</td>'+
       '<td style="font-size:11px;color:var(--text3)">'+escHtml(u.email)+'</td>'+
       '<td>'+rolePill+'</td>'+
       '<td style="white-space:nowrap">'+acts+'</td>'+
@@ -1062,16 +1133,41 @@ function renderProfile() {
   }).join('')||'<tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:14px">No other users yet.</td></tr>';
 }
 
+// ── PROFILE EDIT TOGGLE ──
+function toggleProfileEdit() {
+  const vm=document.getElementById('profile-view-mode');
+  const em=document.getElementById('profile-edit-mode');
+  const btn=document.getElementById('profile-edit-btn');
+  if(em.style.display==='none'||em.style.display===''){
+    // Switch to edit mode
+    document.getElementById('my-name').value=S.user.name||S.user.given_name||'';
+    document.getElementById('my-email').value=S.user.email||'';
+    document.getElementById('my-phone').value=S.myPhone||'';
+    const roleLabel=S.userRole==='admin'?'Admin':S.userRole==='trainer'?'Trainer':'Client';
+    document.getElementById('my-role-display').value=roleLabel;
+    vm.style.display='none';
+    em.style.display='';
+    btn.textContent='Cancel';
+  } else {
+    // Back to view mode
+    vm.style.display='';
+    em.style.display='none';
+    btn.textContent='Edit';
+  }
+}
+
 // ── SAVE MY PROFILE ──
 async function saveMyProfile() {
   const phone=document.getElementById('my-phone').value.trim();
-  // Store phone in Users sheet col F
   const rows=await getVals(`${SH.U}!A2:F`);
   const idx=rows.findIndex(r=>r[0]===S.user.email);
   if(idx>=0){
     await updateVals(`${SH.U}!F${idx+2}`,[[phone]]);
   }
   S.myPhone=phone;
+  // Switch back to view mode and re-render
+  toggleProfileEdit();
+  renderProfile();
   toast('Profile saved','success');
 }
 
@@ -1161,6 +1257,8 @@ function navigate(view,btn) {
   if(view==='log'){populateSel();document.getElementById('log-back-btn').onclick=()=>navigate('clients');if(!S.sess.workouts.length)addWoCard();renderWoCards();}
   if(view==='workouts')renderWorkoutsRepo();
   if(view==='profile')renderProfile();
+  if(view==='users'){renderUsersTable();}
+  if(view==='users')renderUsersTable();
 }
 
 // ── UTILS ──
@@ -1179,7 +1277,10 @@ function toast(msg,type='success'){
 function esc(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
+
 <script src="https://apis.google.com/js/api.js?onload=gapiLoaded" async defer></script>
+
 <script src="https://accounts.google.com/gsi/client" onload="gisLoaded()" async defer></script>
+
 </body>
 </html>
