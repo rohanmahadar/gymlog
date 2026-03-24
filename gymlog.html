@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GYMLOG — Trainer Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #080808;
+      --bg1:     #111111;
+      --bg2:     #191919;
+      --bg3:     #222222;
+      --border:  #2c2c2c;
+      --border2: #404040;
+      --accent:  #c8f542;
+      --accentd: rgba(200,245,66,.12);
+      --accentd2:rgba(200,245,66,.06);
+      --text:    #eeeeee;
+      --text2:   #909090;
+      --text3:   #555555;
+      --red:     #ff5a5a;
+      --green:   #3dca74;
+      --r:       3px;
+      --fw:      'Barlow Condensed', sans-serif;
+      --fm:      'IBM Plex Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--fw); font-size: 16px; line-height: 1.5;
+      min-height: 100vh;
+    }
+    button { cursor: pointer; font-family: var(--fw); border: none; outline: none; transition: all .15s; }
+    input, select, textarea {
+      font-family: var(--fw); background: var(--bg2); color: var(--text);
+      border: 1px solid var(--border); border-radius: var(--r);
+      padding: 8px 12px; font-size: 15px; outline: none; transition: border-color .15s; width: 100%;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+    input[type="number"] { font-family: var(--fm); text-align: center; }
+    select option { background: var(--bg2); }
+
+    /* ── SETUP ── */
+    #screen-setup {
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 24px; position: relative; overflow: hidden;
+    }
+    #screen-setup::before {
+      content: ''; position: absolute; width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,245,66,.05) 0%, transparent 68%);
+      top: -250px; right: -250px; pointer-events: none;
+    }
+    #screen-setup::after {
+      content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,245,66,.03) 0%, transparent 68%);
+      bottom: -200px; left: -100px; pointer-events: none;
+    }
+    .setup-card {
+      background: var(--bg1); border: 1px solid var(--border);
+      border-radius: 8px; padding: 48px; width: 100%; max-width: 460px; position: relative; z-index: 1;
+    }
+    .setup-logo { font-size: 44px; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
+    .setup-logo span { color: var(--accent); }
+    .setup-sub {
+      color: var(--text3); font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
+    }
+    .btn-signin {
+      width: 100%; margin-top: 8px; padding: 14px;
+      background: var(--accent); color: #090909; font-weight: 800;
+      font-size: 15px; letter-spacing: 2px; text-transform: uppercase; border-radius: var(--r);
+    }
+    .btn-signin:hover { opacity: .88; }
+    .btn-signin:disabled { opacity: .35; cursor: not-allowed; }
+    .setup-help { margin-top: 24px; border: 1px solid var(--border); border-radius: var(--r); }
+    .help-toggle {
+      width: 100%; background: transparent; color: var(--text2); padding: 10px 14px;
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      text-align: left; display: flex; justify-content: space-between; align-items: center;
+    }
+    .help-toggle:hover { color: var(--text); }
+    .help-body {
+      display: none; padding: 16px; border-top: 1px solid var(--border);
+      color: var(--text2); font-size: 13px; line-height: 1.8;
+    }
+    .help-body.open { display: block; }
+    .help-body ol { padding-left: 20px; }
+    .help-body li { margin-bottom: 8px; }
+    .help-body code {
+      background: var(--bg3); color: var(--accent); padding: 1px 6px;
+      border-radius: 2px; font-family: var(--fm); font-size: 11px;
+    }
+    .help-body strong { color: var(--text); }
+
+    /* ── APP ── */
+    #screen-app { display: none; min-height: 100vh; }
+
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: var(--bg1); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 20px; z-index: 100; gap: 0;
+    }
+    .nav-logo { font-size: 21px; font-weight: 800; letter-spacing: -.5px; margin-right: 28px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2px; flex: 1; }
+    .nav-link {
+      background: transparent; color: var(--text2); padding: 6px 12px; border-radius: var(--r);
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--text); background: var(--bg2); }
+    .nav-link.active { color: var(--accent); background: var(--accentd); }
+    .nav-user { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .nav-uname { font-size: 12px; font-weight: 600; color: var(--text3); }
+    .btn-signout {
+      background: var(--bg3); color: var(--text3); padding: 5px 10px;
+      border-radius: var(--r); font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    }
+    .btn-signout:hover { color: var(--red); }
+
+    .main { padding-top: 52px; min-height: 100vh; }
+    .view { display: none; padding: 28px 24px; max-width: 900px; margin: 0 auto; }
+    .view.active { display: block; }
+    .view-header {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+    }
+    .view-title { font-size: 34px; font-weight: 800; letter-spacing: -.5px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: var(--r);
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .btn-primary { background: var(--accent); color: #090909; }
+    .btn-primary:hover { opacity: .88; }
+    .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+    .btn-danger-soft { background: transparent; color: var(--red); border: 1px solid transparent; }
+    .btn-danger-soft:hover { background: rgba(255,90,90,.1); }
+    .btn-sm { padding: 4px 10px; font-size: 10px; }
+    .btn-icon {
+      width: 28px; height: 28px; padding: 0; display: inline-flex; align-items: center;
+      justify-content: center; border-radius: var(--r); background: var(--bg3);
+      color: var(--text3); font-size: 14px; border: 1px solid var(--border);
+    }
+    .btn-icon:hover { color: var(--red); border-color: rgba(255,90,90,.5); background: rgba(255,90,90,.08); }
+    .btn-icon:disabled { opacity: .3; cursor: not-allowed; }
+
+    /* ── DASHBOARD ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+    .stat-card { background: var(--bg1); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+    .stat-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+    .stat-val { font-size: 38px; font-weight: 800; color: var(--accent); font-family: var(--fm); line-height: 1; }
+    .stat-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
+    .sec-title { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .recent-list { display: flex; flex-direction: column; gap: 6px; }
+    .session-row {
+      background: var(--bg1); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 12px 16px; display: flex; align-items: center; gap: 14px;
+    }
+    .sr-date { font-family: var(--fm); font-size: 11px; color: var(--text3); min-width: 90px; }
+    .sr-client { font-weight: 700; font-size: 15px; flex: 1; }
+    .sr-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .tag {
+      background: var(--bg3); color: var(--text2); padding: 2px 7px;
+      border-radius: 2px; font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+    }
+    .tag-accent { background: var(--accentd); color: var(--accent); }
+
+    /* ── LOG SESSION ── */
+    .sess-header { display: flex; gap: 12px; margin-bottom: 24px; align-items: flex-end; flex-wrap: wrap; }
+    .sess-header .form-group { margin-bottom: 0; }
+    .fg-date { width: 160px; }
+    .fg-client { flex: 1; min-width: 200px; }
+    .blocks-container { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
+    .bp-block { background: var(--bg1); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .bp-header {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+    }
+    .bp-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); }
+    .bp-content { padding: 14px 16px; }
+    .add-wo-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .add-wo-row select { flex: 1; }
+    .workouts-list { display: flex; flex-direction: column; gap: 10px; }
+    .wo-entry { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+    .wo-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 12px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    }
+    .wo-name { font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+    .sets-head {
+      display: grid; grid-template-columns: 36px 1fr 1fr 32px; gap: 6px;
+      padding: 5px 12px; font-size: 9px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text3); border-bottom: 1px solid var(--border);
+    }
+    .set-row {
+      display: grid; grid-template-columns: 36px 1fr 1fr 32px; gap: 6px;
+      padding: 7px 12px; align-items: center; border-bottom: 1px solid var(--border);
+    }
+    .set-row:last-child { border-bottom: none; }
+    .set-num { font-family: var(--fm); font-size: 11px; color: var(--text3); text-align: center; }
+    .set-row input { padding: 5px 6px; font-size: 15px; }
+    .add-set-row { padding: 6px 12px; border-top: 1px dashed var(--border); }
+    .btn-add-set {
+      background: transparent; color: var(--text3); font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 8px; border-radius: var(--r);
+    }
+    .btn-add-set:hover { color: var(--accent); background: var(--accentd); }
+    .add-bp-row { margin-bottom: 20px; }
+    .save-bar {
+      border-top: 1px solid var(--border); padding-top: 18px;
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .btn-save {
+      background: var(--accent); color: #090909; padding: 12px 28px;
+      font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+      border-radius: var(--r);
+    }
+    .btn-save:hover { opacity: .88; }
+    .btn-save:disabled { opacity: .3; cursor: not-allowed; }
+    .wo-empty { color: var(--text3); font-size: 12px; padding: 6px 0; }
+
+    /* ── HISTORY ── */
+    .hist-filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .hist-filters select { width: 190px; }
+    .hist-filters input[type="date"] { width: 145px; }
+    .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .hist-table th {
+      text-align: left; padding: 7px 12px; font-size: 9px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--text3);
+      border-bottom: 1px solid var(--border);
+    }
+    .hist-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
+    .hist-table tr:hover td { background: var(--bg1); }
+    .td-bold { color: var(--text); font-weight: 600; }
+    .td-mono { font-family: var(--fm); font-size: 12px; }
+    .td-accent { color: var(--accent); font-family: var(--fm); font-size: 13px; text-align: center; }
+    .td-center { text-align: center; }
+
+    /* ── CLIENTS ── */
+    .clients-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 24px; }
+    .client-card { background: var(--bg1); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+    .cc-name { font-size: 19px; font-weight: 800; margin-bottom: 3px; }
+    .cc-phone { font-size: 12px; color: var(--text3); font-family: var(--fm); }
+    .cc-actions { display: flex; gap: 6px; margin-top: 10px; }
+    .add-client-row {
+      background: var(--bg1); border: 1px solid var(--border); border-radius: 6px;
+      padding: 18px; display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;
+    }
+    .add-client-row .form-group { margin-bottom: 0; min-width: 140px; flex: 1; }
+
+    /* ── WORKOUTS REPO ── */
+    .repo-grid { display: flex; flex-direction: column; gap: 12px; }
+    .repo-group { background: var(--bg1); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .repo-gh {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: var(--bg2); border-bottom: 1px solid var(--border);
+    }
+    .repo-gname { font-size: 15px; font-weight: 800; letter-spacing: .5px; }
+    .repo-gcount { font-family: var(--fm); font-size: 11px; color: var(--text3); }
+    .repo-items { padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .wo-chip {
+      display: inline-flex; align-items: center; gap: 5px; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: 2px; padding: 3px 9px;
+      font-size: 12px; font-weight: 500;
+    }
+    .wo-chip button {
+      background: none; color: var(--text3); font-size: 13px; padding: 0; line-height: 1;
+    }
+    .wo-chip button:hover { color: var(--red); }
+    .repo-add { padding: 9px 14px; border-top: 1px dashed var(--border); display: flex; gap: 8px; }
+    .repo-add input { flex: 1; }
+
+    /* ── SHARED ── */
+    .empty-state { text-align: center; padding: 44px; color: var(--text3); }
+    .empty-icon { font-size: 32px; margin-bottom: 10px; }
+    .empty-txt { font-size: 13px; }
+    .divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.75);
+      display: flex; align-items: center; justify-content: center; z-index: 500;
+    }
+    .spinner {
+      width: 38px; height: 38px; border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin .55s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    #toast { position: fixed; bottom: 20px; right: 20px; z-index: 999; display: flex; flex-direction: column; gap: 7px; }
+    .t-item {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r);
+      padding: 10px 14px; font-size: 13px; font-weight: 600; min-width: 200px;
+      display: flex; align-items: center; gap: 9px;
+      animation: slideIn .18s ease;
+    }
+    .t-item.success { border-color: var(--green); color: var(--green); }
+    .t-item.error   { border-color: var(--red);   color: var(--red);   }
+    @keyframes slideIn { from { transform: translateX(16px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-links .nav-link { padding: 5px 7px; font-size: 10px; }
+      .view { padding: 14px 12px; }
+      .view-title { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SETUP SCREEN ═══ -->
+<div id="screen-setup">
+  <div class="setup-card">
+    <div class="setup-logo">GYM<span>LOG</span></div>
+    <div class="setup-sub">Personal Trainer Dashboard</div>
+
+    <div class="form-group">
+      <label class="form-label" for="inp-cid">Google OAuth Client ID</label>
+      <input type="text" id="inp-cid" placeholder="xxxxxxxxxx.apps.googleusercontent.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="inp-sid">Google Sheet ID</label>
+      <input type="text" id="inp-sid" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+    </div>
+
+    <button class="btn-signin" id="btn-signin" onclick="handleSignIn()">Sign in with Google</button>
+
+    <div class="setup-help">
+      <button class="help-toggle" onclick="toggleHelp(this)">
+        <span>📋 One-time Setup Guide</span><span id="help-arrow">+</span>
+      </button>
+      <div class="help-body" id="help-body">
+        <ol>
+          <li>Go to <strong>console.cloud.google.com</strong> → Create a new project.</li>
+          <li>Enable <strong>Google Sheets API</strong> under APIs &amp; Services → Library.</li>
+          <li>Go to <strong>APIs &amp; Services → OAuth consent screen</strong>. Set type to <strong>External</strong>, fill in app name, add your email as a test user.</li>
+          <li>Go to <strong>Credentials → Create Credentials → OAuth 2.0 Client ID</strong>. Choose <strong>Web application</strong>.</li>
+          <li>Under <strong>Authorised JavaScript origins</strong>, add the URL where you'll host this file (e.g. <code>https://yourname.github.io</code> or <code>http://localhost:8080</code>).</li>
+          <li>Copy the <strong>Client ID</strong> and paste it above.</li>
+          <li>Create a blank <strong>Google Sheet</strong>. Copy the ID from the URL — it's the long string between <code>/d/</code> and <code>/edit</code>.</li>
+          <li>Paste the Sheet ID above and sign in. The app will auto-create all tabs and populate a standard workout library on first run.</li>
+        </ol>
+        <div style="margin-top:12px; padding:10px; background:var(--bg3); border-radius:3px; font-size:12px; color:var(--text3);">
+          ⚡ <strong style="color:var(--text2)">Hosting tip:</strong> Drop this file into a GitHub repo and enable GitHub Pages for a free permanent URL. No server required.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP SCREEN ═══ -->
+<div id="screen-app">
+  <nav class="nav">
+    <div class="nav-logo">GYM<span>LOG</span></div>
+    <div class="nav-links">
+      <button class="nav-link active" data-view="dashboard" onclick="navigate('dashboard',this)">Dashboard</button>
+      <button class="nav-link" data-view="log"       onclick="navigate('log',this)">Log Session</button>
+      <button class="nav-link" data-view="history"   onclick="navigate('history',this)">History</button>
+      <button class="nav-link" data-view="clients"   onclick="navigate('clients',this)">Clients</button>
+      <button class="nav-link" data-view="workouts"  onclick="navigate('workouts',this)">Workouts</button>
+    </div>
+    <div class="nav-user">
+      <span class="nav-uname" id="user-name"></span>
+      <button class="btn-signout" onclick="handleSignOut()">Sign Out</button>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="view-dashboard" class="view active">
+      <div class="view-header">
+        <div class="view-title">Dashboard</div>
+        <button class="btn btn-primary" onclick="navigate('log', document.querySelector('[data-view=log]'))">+ Log Session</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Active Clients</div>
+          <div class="stat-val" id="stat-clients">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Sessions This Week</div>
+          <div class="stat-val" id="stat-week">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Sessions</div>
+          <div class="stat-val" id="stat-total">—</div>
+        </div>
+      </div>
+      <div class="sec-title">Recent Sessions</div>
+      <div id="recent-sessions" class="recent-list">
+        <div class="empty-state"><div class="empty-icon">🏋️</div><div class="empty-txt">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- LOG SESSION -->
+    <div id="view-log" class="view">
+      <div class="view-header">
+        <div class="view-title">Log Session</div>
+      </div>
+      <div class="sess-header">
+        <div class="form-group fg-date">
+          <label class="form-label">Date</label>
+          <input type="date" id="sess-date">
+        </div>
+        <div class="form-group fg-client">
+          <label class="form-label">Client</label>
+          <select id="sess-client">
+            <option value="">Select client...</option>
+          </select>
+        </div>
+      </div>
+      <div id="blocks-container" class="blocks-container"></div>
+      <div class="add-bp-row">
+        <button class="btn btn-ghost" onclick="addBpBlock()">+ Add Body Part</button>
+      </div>
+      <div class="save-bar">
+        <button class="btn btn-ghost" onclick="clearSession()">Clear All</button>
+        <button class="btn-save" id="btn-save" onclick="saveSession()">Save Session</button>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="view-history" class="view">
+      <div class="view-header">
+        <div class="view-title">History</div>
+        <button class="btn btn-ghost btn-sm" onclick="refreshHistory()">↻ Refresh</button>
+      </div>
+      <div class="hist-filters">
+        <select id="flt-client" onchange="renderHistory()">
+          <option value="">All clients</option>
+        </select>
+        <input type="date" id="flt-from" onchange="renderHistory()" title="From date">
+        <input type="date" id="flt-to"   onchange="renderHistory()" title="To date">
+        <button class="btn btn-ghost btn-sm" onclick="clearHistFilters()">Clear</button>
+      </div>
+      <div id="hist-container">
+        <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div id="view-clients" class="view">
+      <div class="view-header">
+        <div class="view-title">Clients</div>
+      </div>
+      <div id="clients-grid" class="clients-grid"></div>
+      <div class="sec-title">Add New Client</div>
+      <div class="add-client-row">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="nc-name" placeholder="e.g. Arjun Sharma"
+            onkeydown="if(event.key==='Enter') addClient()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone (optional)</label>
+          <input type="text" id="nc-phone" placeholder="+91 9000 000000"
+            onkeydown="if(event.key==='Enter') addClient()">
+        </div>
+        <button class="btn btn-primary" onclick="addClient()">+ Add Client</button>
+      </div>
+    </div>
+
+    <!-- WORKOUTS REPO -->
+    <div id="view-workouts" class="view">
+      <div class="view-header">
+        <div class="view-title">Workout Library</div>
+      </div>
+      <div id="repo-grid" class="repo-grid"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading" style="display:none">
+  <div class="spinner"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════
+
+const DISC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+const SCOPES = [
+  'https://www.googleapis.com/auth/spreadsheets',
+  'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/userinfo.profile'
+].join(' ');
+
+const SH = { C: 'Clients', R: 'WorkoutRepo', L: 'WorkoutLogs' };
+
+const BODY_PARTS = [
+  'Chest','Back','Shoulders','Biceps','Triceps',
+  'Legs','Glutes','Core','Cardio','Full Body'
+];
+
+const DEFAULT_REPO = {
+  'Chest':     ['Bench Press','Incline Bench Press','Decline Bench Press','Dumbbell Flyes','Cable Crossovers','Push-ups','Chest Dips','Pec Deck'],
+  'Back':      ['Deadlift','Pull-ups','Bent-over Row','Lat Pulldown','Seated Cable Row','T-Bar Row','Single-arm Dumbbell Row','Face Pull'],
+  'Shoulders': ['Barbell Overhead Press','Dumbbell Shoulder Press','Lateral Raises','Front Raises','Rear Delt Flyes','Arnold Press','Upright Row','Cable Lateral Raises'],
+  'Biceps':    ['Barbell Curl','Dumbbell Curl','Hammer Curl','Preacher Curl','Concentration Curl','Cable Curl','Incline Dumbbell Curl','Reverse Curl'],
+  'Triceps':   ['Tricep Dips','Skull Crushers','Tricep Pushdown','Overhead Tricep Extension','Close Grip Bench Press','Kickbacks','Diamond Push-ups'],
+  'Legs':      ['Barbell Squat','Leg Press','Lunges','Leg Extension','Leg Curl','Romanian Deadlift','Calf Raises','Hack Squat','Bulgarian Split Squat','Step-ups'],
+  'Glutes':    ['Hip Thrust','Glute Bridge','Cable Kickback','Sumo Squat','Resistance Band Walks'],
+  'Core':      ['Plank','Crunches','Russian Twists','Leg Raises','Ab Rollout','Cable Crunch','Bicycle Crunches','Hanging Knee Raises','Mountain Climbers'],
+  'Cardio':    ['Treadmill Run','Stationary Bike','Rowing Machine','Jump Rope','Stair Climber','Elliptical','HIIT Sprints'],
+  'Full Body': ['Clean and Press','Burpees','Kettlebell Swings','Thrusters','Turkish Get-up','Man Makers','Battle Ropes']
+};
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+
+const S = {
+  cfg: { cid: '', sid: '' },
+  user: null,
+  clients: [],    // [{name, phone}]
+  repo: {},       // {bodyPart: [name]}
+  logs: [],       // [{logId,date,client,bodyPart,workout,setNum,reps,weight,loggedAt}]
+  sess: {         // current session
+    date: '',
+    client: '',
+    blocks: []    // [{bodyPart, workouts: [{name, sets:[{reps,weight}]}]}]
+  },
+  tc: null,       // tokenClient
+  gapiOk: false,
+  gisOk: false
+};
+
+// ═══════════════════════════════════════════════════
+//  GOOGLE API BOOTSTRAP
+// ═══════════════════════════════════════════════════
+
+window.gapiLoaded = () => {
+  gapi.load('client', async () => {
+    await gapi.client.init({ discoveryDocs: [DISC] });
+    S.gapiOk = true;
+    onApisReady();
+  });
+};
+
+window.gisLoaded = () => {
+  S.gisOk = true;
+  onApisReady();
+};
+
+function onApisReady() {
+  if (!S.gapiOk || !S.gisOk) return;
+  const cid = localStorage.getItem('gl_cid') || '';
+  const sid = localStorage.getItem('gl_sid') || '';
+  if (cid) document.getElementById('inp-cid').value = cid;
+  if (sid) document.getElementById('inp-sid').value = sid;
+  document.getElementById('sess-date').value = today();
+}
+
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+
+function handleSignIn() {
+  const cid = document.getElementById('inp-cid').value.trim();
+  const sid = document.getElementById('inp-sid').value.trim();
+  if (!cid) { toast('Enter your Google OAuth Client ID', 'error'); return; }
+  if (!sid) { toast('Enter your Google Sheet ID', 'error'); return; }
+  localStorage.setItem('gl_cid', cid);
+  localStorage.setItem('gl_sid', sid);
+  S.cfg = { cid, sid };
+
+  S.tc = google.accounts.oauth2.initTokenClient({
+    client_id: cid,
+    scope: SCOPES,
+    callback: async (resp) => {
+      if (resp.error) { toast('Auth error: ' + resp.error, 'error'); return; }
+      gapi.client.setToken(resp);
+      await postAuth();
+    }
+  });
+  S.tc.requestAccessToken({ prompt: '' });
+}
+
+async function postAuth() {
+  showLoad(true);
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + gapi.client.getToken().access_token }
+    });
+    S.user = await r.json();
+    document.getElementById('user-name').textContent = S.user.given_name || S.user.email;
+
+    await initSheets();
+    await loadAll();
+
+    document.getElementById('screen-setup').style.display = 'none';
+    document.getElementById('screen-app').style.display = 'block';
+    renderDashboard();
+  } catch (e) {
+    console.error(e);
+    toast('Could not connect. Check Client ID, Sheet ID, and console for errors.', 'error');
+  } finally {
+    showLoad(false);
+  }
+}
+
+function handleSignOut() {
+  try { google.accounts.oauth2.revoke(gapi.client.getToken().access_token, ()=>{}); } catch(_){}
+  gapi.client.setToken(null);
+  S.user = null;
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('screen-setup').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════
+//  SHEETS INIT
+// ═══════════════════════════════════════════════════
+
+async function initSheets() {
+  const meta = await gapi.client.sheets.spreadsheets.get({ spreadsheetId: S.cfg.sid });
+  const existing = meta.result.sheets.map(s => s.properties.title);
+  const needed = [SH.C, SH.R, SH.L].filter(n => !existing.includes(n));
+
+  if (needed.length) {
+    await gapi.client.sheets.spreadsheets.batchUpdate({
+      spreadsheetId: S.cfg.sid,
+      resource: { requests: needed.map(title => ({ addSheet: { properties: { title } } })) }
+    });
+  }
+
+  const headerUpdates = [];
+  if (!existing.includes(SH.C)) headerUpdates.push({ range: `${SH.C}!A1:C1`, values: [['Name','Phone','Active']] });
+  if (!existing.includes(SH.R)) headerUpdates.push({ range: `${SH.R}!A1:B1`, values: [['BodyPart','WorkoutName']] });
+  if (!existing.includes(SH.L)) headerUpdates.push({ range: `${SH.L}!A1:I1`, values: [['LogID','SessionDate','ClientName','BodyPart','WorkoutName','SetNum','Reps','WeightKg','LoggedAt']] });
+
+  if (headerUpdates.length) {
+    await gapi.client.sheets.spreadsheets.values.batchUpdate({
+      spreadsheetId: S.cfg.sid,
+      resource: { valueInputOption: 'USER_ENTERED', data: headerUpdates }
+    });
+  }
+
+  // Populate default workouts if repo empty
+  const repoRows = await getVals(`${SH.R}!A2:B`);
+  if (!repoRows || repoRows.length === 0) {
+    const rows = [];
+    for (const [bp, wos] of Object.entries(DEFAULT_REPO)) wos.forEach(w => rows.push([bp, w]));
+    await appendVals(`${SH.R}!A:B`, rows);
+    toast('Workout library populated with defaults ✓', 'success');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  SHEETS API
+// ═══════════════════════════════════════════════════
+
+async function getVals(range) {
+  const r = await gapi.client.sheets.spreadsheets.values.get({ spreadsheetId: S.cfg.sid, range });
+  return r.result.values || [];
+}
+
+async function appendVals(range, values) {
+  return gapi.client.sheets.spreadsheets.values.append({
+    spreadsheetId: S.cfg.sid, range,
+    valueInputOption: 'USER_ENTERED',
+    resource: { values }
+  });
+}
+
+async function updateVals(range, values) {
+  return gapi.client.sheets.spreadsheets.values.update({
+    spreadsheetId: S.cfg.sid, range,
+    valueInputOption: 'USER_ENTERED',
+    resource: { values }
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  DATA LOADING
+// ═══════════════════════════════════════════════════
+
+async function loadAll() {
+  await Promise.all([loadClients(), loadRepo(), loadLogs()]);
+}
+
+async function loadClients() {
+  const rows = await getVals(`${SH.C}!A2:C`);
+  S.clients = rows.filter(r => r[0] && r[2] !== 'false').map(r => ({ name: r[0], phone: r[1]||'' }));
+}
+
+async function loadRepo() {
+  const rows = await getVals(`${SH.R}!A2:B`);
+  S.repo = {};
+  rows.forEach(r => {
+    if (!r[0]||!r[1]) return;
+    const bp = r[0].trim(), w = r[1].trim();
+    if (!S.repo[bp]) S.repo[bp] = [];
+    S.repo[bp].push(w);
+  });
+}
+
+async function loadLogs() {
+  const rows = await getVals(`${SH.L}!A2:I`);
+  S.logs = rows.filter(r => r.length >= 7).map(r => ({
+    logId: r[0], date: r[1], client: r[2], bodyPart: r[3],
+    workout: r[4], setNum: r[5]||'', reps: r[6]||'', weight: r[7]||'', loggedAt: r[8]||''
+  }));
+}
+
+// ═══════════════════════════════════════════════════
+//  SESSION: STATE MANAGEMENT
+// ═══════════════════════════════════════════════════
+
+function addBpBlock() {
+  S.sess.blocks.push({ bodyPart: '', workouts: [] });
+  renderBlocks();
+}
+
+function removeBpBlock(i) {
+  S.sess.blocks.splice(i, 1);
+  renderBlocks();
+}
+
+function setBp(i, val) {
+  S.sess.blocks[i].bodyPart = val;
+  S.sess.blocks[i].workouts = [];  // clear workouts when BP changes
+  renderBlocks();
+}
+
+function addWorkout(bi) {
+  const sel = document.getElementById('wo-sel-' + bi);
+  const name = sel.value;
+  if (!name) return;
+  const block = S.sess.blocks[bi];
+  if (block.workouts.find(w => w.name === name)) { toast('Already added', 'error'); return; }
+  block.workouts.push({ name, sets: [{ reps: '', weight: '' }] });
+  renderBlocks();
+}
+
+function removeWorkout(bi, wi) {
+  S.sess.blocks[bi].workouts.splice(wi, 1);
+  renderBlocks();
+}
+
+function addSet(bi, wi) {
+  S.sess.blocks[bi].workouts[wi].sets.push({ reps: '', weight: '' });
+  renderBlocks();
+}
+
+function removeSet(bi, wi, si) {
+  const sets = S.sess.blocks[bi].workouts[wi].sets;
+  if (sets.length <= 1) return;
+  sets.splice(si, 1);
+  renderBlocks();
+}
+
+function updSet(bi, wi, si, field, val) {
+  S.sess.blocks[bi].workouts[wi].sets[si][field] = val;
+}
+
+function clearSession() {
+  S.sess = { date: today(), client: '', blocks: [] };
+  document.getElementById('sess-date').value = today();
+  document.getElementById('sess-client').value = '';
+  renderBlocks();
+}
+
+async function saveSession() {
+  const date   = document.getElementById('sess-date').value;
+  const client = document.getElementById('sess-client').value;
+  if (!date)   { toast('Select a date', 'error'); return; }
+  if (!client) { toast('Select a client', 'error'); return; }
+  if (S.sess.blocks.length === 0) { toast('Add at least one body part', 'error'); return; }
+
+  for (const bl of S.sess.blocks) {
+    if (!bl.bodyPart) { toast('Select body part for all blocks', 'error'); return; }
+    if (bl.workouts.length === 0) { toast(`Add at least one workout for ${bl.bodyPart}`, 'error'); return; }
+  }
+
+  const ts  = new Date().toISOString();
+  const sid = 'S' + Date.now();
+  const rows = [];
+  let rowIdx = 0;
+
+  S.sess.blocks.forEach(bl => {
+    bl.workouts.forEach(wo => {
+      wo.sets.forEach((set, si) => {
+        rows.push([`${sid}-${rowIdx++}`, date, client, bl.bodyPart, wo.name, si + 1, set.reps||'', set.weight||'', ts]);
+      });
+    });
+  });
+
+  if (!rows.length) { toast('Nothing to save', 'error'); return; }
+
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    await appendVals(`${SH.L}!A:I`, rows);
+    await loadLogs();
+    toast(`Session saved — ${rows.length} sets logged`, 'success');
+    clearSession();
+    updateStats();
+    renderRecentSessions();
+  } catch (e) {
+    console.error(e);
+    toast('Save failed. Check console.', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Session';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  CLIENTS
+// ═══════════════════════════════════════════════════
+
+async function addClient() {
+  const name  = document.getElementById('nc-name').value.trim();
+  const phone = document.getElementById('nc-phone').value.trim();
+  if (!name) { toast('Enter a name', 'error'); return; }
+  if (S.clients.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+    toast('Client already exists', 'error'); return;
+  }
+  await appendVals(`${SH.C}!A:C`, [[name, phone, 'true']]);
+  await loadClients();
+  document.getElementById('nc-name').value = '';
+  document.getElementById('nc-phone').value = '';
+  renderClients();
+  populateSelects();
+  toast(`${name} added`, 'success');
+}
+
+async function removeClient(name) {
+  if (!confirm(`Remove "${name}"? Their session history will be retained.`)) return;
+  const rows = await getVals(`${SH.C}!A:C`);
+  const idx  = rows.findIndex(r => r[0] === name);
+  if (idx < 0) return;
+  await updateVals(`${SH.C}!C${idx + 1}`, [['false']]);
+  await loadClients();
+  renderClients();
+  populateSelects();
+  toast(`${name} removed`, 'success');
+}
+
+function logForClient(name) {
+  navigate('log', document.querySelector('[data-view=log]'));
+  setTimeout(() => { document.getElementById('sess-client').value = name; }, 50);
+}
+
+// ═══════════════════════════════════════════════════
+//  WORKOUT REPO
+// ═══════════════════════════════════════════════════
+
+async function addToRepo(bp) {
+  const inp  = document.getElementById('ri-' + bp);
+  const name = inp.value.trim();
+  if (!name) return;
+  const existing = (S.repo[bp] || []).map(w => w.toLowerCase());
+  if (existing.includes(name.toLowerCase())) { toast('Already exists', 'error'); return; }
+  await appendVals(`${SH.R}!A:B`, [[bp, name]]);
+  await loadRepo();
+  inp.value = '';
+  renderWorkoutsRepo();
+  toast(`"${name}" added to ${bp}`, 'success');
+}
+
+async function removeFromRepo(bp, name) {
+  if (!confirm(`Remove "${name}" from ${bp}?`)) return;
+  const rows = await getVals(`${SH.R}!A:B`);
+  const idx  = rows.findIndex(r => r[0] === bp && r[1] === name);
+  if (idx < 0) return;
+  // Clear the row (overwrite with blanks)
+  await updateVals(`${SH.R}!A${idx+1}:B${idx+1}`, [['','']]);
+  await loadRepo();
+  renderWorkoutsRepo();
+  toast(`"${name}" removed`, 'success');
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDERING
+// ═══════════════════════════════════════════════════
+
+function renderBlocks() {
+  const c = document.getElementById('blocks-container');
+  c.innerHTML = '';
+  S.sess.blocks.forEach((block, bi) => {
+    const avail = (S.repo[block.bodyPart] || []);
+    const div = document.createElement('div');
+    div.className = 'bp-block';
+    div.innerHTML = `
+      <div class="bp-header">
+        <span class="bp-label">Focus</span>
+        <select style="flex:1;max-width:220px" onchange="setBp(${bi},this.value)">
+          <option value="">Select body part...</option>
+          ${BODY_PARTS.map(p => `<option value="${p}" ${block.bodyPart===p?'selected':''}>${p}</option>`).join('')}
+        </select>
+        <button class="btn-icon" onclick="removeBpBlock(${bi})" title="Remove block">✕</button>
+      </div>
+      ${block.bodyPart ? `
+      <div class="bp-content">
+        <div class="add-wo-row">
+          <select id="wo-sel-${bi}">
+            <option value="">Select workout...</option>
+            ${avail.map(w=>`<option value="${w}">${w}</option>`).join('')}
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="addWorkout(${bi})">+ Add</button>
+        </div>
+        <div class="workouts-list">
+          ${block.workouts.length===0 ? '<div class="wo-empty">No workouts added. Select one above.</div>' : ''}
+          ${block.workouts.map((wo,wi) => `
+            <div class="wo-entry">
+              <div class="wo-header">
+                <span class="wo-name">${wo.name}</span>
+                <button class="btn btn-danger-soft btn-sm" onclick="removeWorkout(${bi},${wi})">✕ Remove</button>
+              </div>
+              <div class="sets-head"><div>SET</div><div>REPS</div><div>WEIGHT (kg)</div><div></div></div>
+              ${wo.sets.map((set,si)=>`
+                <div class="set-row">
+                  <div class="set-num">${si+1}</div>
+                  <input type="number" min="0" max="999" step="1" value="${set.reps}" placeholder="0"
+                    oninput="updSet(${bi},${wi},${si},'reps',this.value)">
+                  <input type="number" min="0" max="9999" step="0.5" value="${set.weight}" placeholder="0"
+                    oninput="updSet(${bi},${wi},${si},'weight',this.value)">
+                  <button class="btn-icon" onclick="removeSet(${bi},${wi},${si})"
+                    ${wo.sets.length<=1?'disabled':''} title="Remove set">✕</button>
+                </div>
+              `).join('')}
+              <div class="add-set-row">
+                <button class="btn-add-set" onclick="addSet(${bi},${wi})">+ Add Set</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>` : ''}
+    `;
+    c.appendChild(div);
+  });
+}
+
+function renderDashboard() {
+  updateStats();
+  renderRecentSessions();
+}
+
+function updateStats() {
+  document.getElementById('stat-clients').textContent = S.clients.length;
+  document.getElementById('stat-total').textContent   = uniqueSessions(S.logs);
+  const d7 = new Date(); d7.setDate(d7.getDate()-7);
+  const w7 = S.logs.filter(l => l.date >= d7.toISOString().slice(0,10));
+  document.getElementById('stat-week').textContent = uniqueSessions(w7);
+}
+
+function uniqueSessions(logs) {
+  return new Set(logs.map(l => `${l.date}|${l.client}`)).size;
+}
+
+function renderRecentSessions() {
+  const el = document.getElementById('recent-sessions');
+  const map = new Map();
+  S.logs.forEach(l => {
+    const k = `${l.date}|${l.client}`;
+    if (!map.has(k)) map.set(k, { date:l.date, client:l.client, parts: new Set() });
+    map.get(k).parts.add(l.bodyPart);
+  });
+  const sessions = [...map.values()].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10);
+  if (!sessions.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">🏋️</div><div class="empty-txt">No sessions yet. Log your first one!</div></div>';
+    return;
+  }
+  el.innerHTML = sessions.map(s=>`
+    <div class="session-row">
+      <div class="sr-date">${s.date}</div>
+      <div class="sr-client">${s.client}</div>
+      <div class="sr-tags">${[...s.parts].map(p=>`<span class="tag tag-accent">${p}</span>`).join('')}</div>
+    </div>
+  `).join('');
+}
+
+function renderHistory() {
+  const fc = document.getElementById('flt-client').value;
+  const ff = document.getElementById('flt-from').value;
+  const ft = document.getElementById('flt-to').value;
+  let logs = [...S.logs];
+  if (fc) logs = logs.filter(l => l.client===fc);
+  if (ff) logs = logs.filter(l => l.date>=ff);
+  if (ft) logs = logs.filter(l => l.date<=ft);
+  logs.sort((a,b)=>b.date.localeCompare(a.date)||+a.setNum-+b.setNum);
+
+  const el = document.getElementById('hist-container');
+  if (!logs.length) {
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-txt">No logs match the filters.</div></div>';
+    return;
+  }
+  el.innerHTML=`
+    <table class="hist-table">
+      <thead><tr>
+        <th>Date</th><th>Client</th><th>Body Part</th>
+        <th>Workout</th><th>Set</th><th>Reps</th><th>Weight (kg)</th>
+      </tr></thead>
+      <tbody>${logs.map(l=>`
+        <tr>
+          <td class="td-mono">${l.date}</td>
+          <td class="td-bold">${l.client}</td>
+          <td><span class="tag">${l.bodyPart}</span></td>
+          <td>${l.workout}</td>
+          <td class="td-mono td-center">${l.setNum}</td>
+          <td class="td-accent">${l.reps}</td>
+          <td class="td-accent">${l.weight}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+async function refreshHistory() {
+  showLoad(true);
+  await loadLogs();
+  renderHistory();
+  showLoad(false);
+  toast('History refreshed', 'success');
+}
+
+function clearHistFilters() {
+  document.getElementById('flt-client').value='';
+  document.getElementById('flt-from').value='';
+  document.getElementById('flt-to').value='';
+  renderHistory();
+}
+
+function renderClients() {
+  const el = document.getElementById('clients-grid');
+  if (!S.clients.length) {
+    el.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👤</div><div class="empty-txt">No clients yet.</div></div>';
+    return;
+  }
+  el.innerHTML = S.clients.map(c=>`
+    <div class="client-card">
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-phone">${c.phone||'—'}</div>
+      <div class="cc-actions">
+        <button class="btn btn-ghost btn-sm" onclick="logForClient('${esc(c.name)}')">Log Session</button>
+        <button class="btn btn-danger-soft btn-sm" onclick="removeClient('${esc(c.name)}')">Remove</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderWorkoutsRepo() {
+  const el = document.getElementById('repo-grid');
+  const allParts = [...new Set([...BODY_PARTS, ...Object.keys(S.repo)])];
+  el.innerHTML = allParts.map(bp => {
+    const wos = S.repo[bp] || [];
+    const bpId = bp.replace(/\s+/g,'_');
+    return `
+    <div class="repo-group">
+      <div class="repo-gh">
+        <span class="repo-gname">${bp}</span>
+        <span class="repo-gcount">${wos.length} exercises</span>
+      </div>
+      <div class="repo-items">
+        ${wos.map(w=>`
+          <span class="wo-chip">${w}
+            <button onclick="removeFromRepo('${esc(bp)}','${esc(w)}')" title="Remove">✕</button>
+          </span>`).join('')}
+        ${!wos.length ? '<span style="color:var(--text3);font-size:12px">None yet</span>' : ''}
+      </div>
+      <div class="repo-add">
+        <input type="text" id="ri-${bpId}" placeholder="Add exercise..."
+          onkeydown="if(event.key==='Enter') addToRepo('${esc(bp)}')">
+        <button class="btn btn-ghost btn-sm" onclick="addToRepo('${esc(bp)}')">+ Add</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function populateSelects() {
+  const opts = '<option value="">Select client...</option>' +
+    S.clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');
+  document.getElementById('sess-client').innerHTML = opts;
+  document.getElementById('flt-client').innerHTML  =
+    '<option value="">All clients</option>' +
+    S.clients.map(c=>`<option value="${esc(c.name)}">${c.name}</option>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+
+function navigate(view, btn) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  if (view==='dashboard') renderDashboard();
+  if (view==='log')       { populateSelects(); renderBlocks(); }
+  if (view==='history')   { populateSelects(); renderHistory(); }
+  if (view==='clients')   renderClients();
+  if (view==='workouts')  renderWorkoutsRepo();
+}
+
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+
+function today() { return new Date().toISOString().slice(0,10); }
+
+function showLoad(on) {
+  document.getElementById('loading').style.display = on ? 'flex' : 'none';
+}
+
+function toast(msg, type='success') {
+  const el = document.getElementById('toast');
+  const t  = document.createElement('div');
+  t.className = 't-item '+type;
+  t.innerHTML = `<span>${type==='success'?'✓':'✕'}</span>${msg}`;
+  el.appendChild(t);
+  setTimeout(()=>t.remove(), 3200);
+}
+
+function esc(s) {
+  return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+function toggleHelp(btn) {
+  const body = document.getElementById('help-body');
+  const open = body.classList.toggle('open');
+  document.getElementById('help-arrow').textContent = open ? '−' : '+';
+}
+</script>
+
+<!-- Load Google APIs with callbacks -->
+<script src="https://apis.google.com/js/api.js?onload=gapiLoaded" async defer></script>
+<script src="https://accounts.google.com/gsi/client" onload="gisLoaded()" async defer></script>
+</body>
+</html>
