@@ -715,7 +715,7 @@ async function loadClients() {
   // allUsers = ALL users from Clients sheet (no active/role filter — just exclude deleted)
   // This is used for user management table, trainer dropdowns, profile lookups
   const allCRows = await getVals(`${SH.C}!A2:H`);
-  S.allUsers=allCRows.filter(r=>r[4]&&(r[5]||'').toLowerCase()!=='deleted').map(r=>({
+  S.allUsers=allCRows.filter(r=>r[0]&&(r[5]||'').toLowerCase()!=='deleted').map(r=>({
     name:r[0]||'',phone:r[1]||'',active:(r[2]||'true').toString().toLowerCase(),trainerEmail:r[3]||'',
     email:(r[4]||'').toLowerCase(),role:r[5]||'client',pictureUrl:r[6]||'',registeredAt:r[7]||''
   }));
