@@ -98,7 +98,7 @@
     .clients-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
     .client-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;transition:border-color .15s}
     .client-card:hover{border-color:var(--accent)}
-    .cc-avatar{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cc-avatar{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
     .cc-info{flex:1;min-width:0}
     .cc-name{font-size:15px;font-weight:700}
     .cc-meta{font-size:12px;color:var(--text3)}
@@ -712,8 +712,10 @@ async function loadClients() {
       trainerEmail:r[3]||'', clientEmail:(r[4]||'').toLowerCase(),
       role:r[5]||'client', pictureUrl:r[6]||'', registeredAt:r[7]||''
     }));
-  // Also update allUsers from Clients sheet (single source of truth)
-  S.allUsers=rows.filter(r=>r[4]&&(r[5]||'')!=='deleted').map(r=>({
+  // allUsers = ALL users from Clients sheet (no active/role filter — just exclude deleted)
+  // This is used for user management table, trainer dropdowns, profile lookups
+  const allCRows = await getVals(`${SH.C}!A2:H`);
+  S.allUsers=allCRows.filter(r=>r[4]&&(r[5]||'').toLowerCase()!=='deleted').map(r=>({
     name:r[0]||'',phone:r[1]||'',active:(r[2]||'true').toString().toLowerCase(),trainerEmail:r[3]||'',
     email:(r[4]||'').toLowerCase(),role:r[5]||'client',pictureUrl:r[6]||'',registeredAt:r[7]||''
   }));
@@ -1113,7 +1115,10 @@ function renderClientsList() {
       ?'<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#f0fdf4;color:#16a34a;margin-left:2px">Trainer</span>'
       :'<span style="font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;background:#e8effd;color:#1a56db;margin-left:2px">Client</span>';
     return '<div class="client-card" onclick="openClientDetail(\''+esc(c.name)+'\')">'+
-      '<div class="cc-avatar">'+c.name.charAt(0).toUpperCase()+'</div>'+
+      (c.pictureUrl
+        ?'<img class="cc-avatar" src="'+c.pictureUrl+'" style="object-fit:cover;border:2px solid var(--border)">'
+        :'<div class="cc-avatar">'+c.name.charAt(0).toUpperCase()+'</div>')+
+
       '<div class="cc-info">'+
         '<div class="cc-name" style="display:flex;align-items:center;gap:6px">'+escHtml(c.name)+roleBadge+'</div>'+
         '<div class="cc-meta" style="display:flex;align-items:center;gap:6px">'+escHtml(c.clientEmail||c.phone||'')+
@@ -1317,7 +1322,8 @@ function renderUsersTable() {
     ...others.filter(u=>u.role==='trainer'),
     ...others.filter(u=>u.role==='client'),
     ...others.filter(u=>u.role==='admin'),
-  ].filter(u=>u.role!=='deleted');
+    ...others.filter(u=>!['pending','trainer','client','admin','deleted'].includes(u.role||'')),
+  ];
   tbody.innerHTML=sorted.map(u=>{
     const av=u.pictureUrl
       ?'<img class="user-row-avatar" src="'+u.pictureUrl+'">'
