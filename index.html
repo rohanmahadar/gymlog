@@ -72,17 +72,17 @@
     .pm-detail-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;min-width:46px;flex-shrink:0}
     .pm-detail-val{font-size:12px;color:var(--text2);word-break:break-all}
     .profile-menu.hidden{display:none}
-    .pm-user{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+    .pm-user{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
     .pm-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0}
     .pm-avatar-ph{width:40px;height:40px;border-radius:50%;background:var(--accentl);color:var(--accent);font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .pm-name{font-size:14px;font-weight:700;line-height:1.2}
+    .pm-name{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px}
     .pm-email{font-size:11px;color:var(--text3)}
     .pm-role{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;margin-top:2px}
     .pm-role.admin{background:#fef9c3;color:#a16207}
     .pm-role.user{background:var(--accentl);color:var(--accent)}
-    .pm-btn{width:100%;text-align:left;background:transparent;color:var(--text2);font-size:13px;padding:7px 0;border-radius:0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+    .pm-btn{width:100%;text-align:left;background:transparent;color:var(--text2);font-size:14px;font-weight:600;padding:10px 0;border-radius:0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;line-height:1.3}
     .pm-btn:last-child{border-bottom:none;padding-bottom:0}
-    .pm-btn:hover{color:var(--text)}
+    .pm-btn:hover{color:var(--text);background:transparent}
     .pm-signout{color:var(--red)!important}
     .pm-overlay{position:fixed;inset:0;z-index:199}
     .pm-overlay.hidden{display:none}
@@ -349,9 +349,6 @@
           <button class="btn-add-sm" style="width:100%;padding:10px" onclick="saveMyProfile()">Save Changes</button>
         </div>
       </div>
-      <div id="profile-manage-users-btn" style="display:none;margin-top:4px">
-        <button class="add-wo-btn" style="margin-top:0" onclick="navigateUsers()">&#128101; Manage Users &amp; Permissions &#8250;</button>
-      </div>
       <div class="pb"></div>
     </div>
   </div>
@@ -360,7 +357,7 @@
   <!-- USERS (admin only) -->
   <div id="view-users" class="view">
     <div class="top-bar">
-      <button class="top-bar-back" onclick="navigate('profile')">&#8249; Profile</button>
+      <button class="top-bar-back" onclick="navigate('clients')">&#8249; Home</button>
       <div class="top-bar-title">Users</div>
       <div style="width:54px"></div>
     </div>
@@ -479,28 +476,33 @@ function onReady() {
 }
 
 function silentSignIn() {
-  // Show a subtle loading indicator while auto-signing in
   document.getElementById('loading').style.display='flex';
+  // Safety timeout — if callback never fires (Google session expired),
+  // hide spinner and fall back to sign-in screen after 6 seconds
+  const bailout = setTimeout(() => {
+    document.getElementById('loading').style.display='none';
+    localStorage.removeItem('gl_authed');
+  }, 6000);
   try {
     S.tc = google.accounts.oauth2.initTokenClient({
       client_id: CID, scope: SCOPES,
-      prompt: '',  // no popup — uses existing Google session cookie
+      prompt: '',
       callback: async (resp) => {
+        clearTimeout(bailout);
         if (resp.error || !resp.access_token) {
-          // Silent failed — show sign-in screen normally
           document.getElementById('loading').style.display='none';
           localStorage.removeItem('gl_authed');
           return;
         }
         gapi.client.setToken(resp);
-        // Schedule token refresh before expiry (tokens last ~3600s)
-        const expiresIn = (resp.expires_in || 3600) - 120; // refresh 2 min early
+        const expiresIn = (resp.expires_in || 3600) - 120;
         setTimeout(silentSignIn, expiresIn * 1000);
         await postAuth();
       }
     });
     S.tc.requestAccessToken({prompt: ''});
   } catch(e) {
+    clearTimeout(bailout);
     document.getElementById('loading').style.display='none';
     localStorage.removeItem('gl_authed');
   }
@@ -1295,9 +1297,6 @@ function renderProfile() {
   document.getElementById('profile-view-mode').style.display='';
   document.getElementById('profile-edit-btn').textContent='Edit';
 
-  // Admin: show manage users button linking to users view
-  const adminBtn=document.getElementById('profile-manage-users-btn');
-  if(adminBtn) adminBtn.style.display=S.userRole==='admin'?'':'none';
 }
 
 
