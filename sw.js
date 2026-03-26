@@ -1,4 +1,4 @@
-const CACHE = 'gymlog-v1';
+const CACHE = 'gymlog-v3';
 const SHELL = ['./', './index.html', './manifest.json'];
 
 // Install: cache the app shell
